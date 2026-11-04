@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-logo="cyan">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -423,7 +423,7 @@
   <header class="nav" id="nav">
     <div class="wrap">
       <a href="#top" class="brand" aria-label="TwiNet home">
-        <img class="tw-logo" src="assets/twinet-logo-green.webp" alt="TwiNet" width="112" height="84" />
+        <img class="tw-logo" src="assets/twinet-logo-cyan.webp" alt="TwiNet" width="112" height="84" />
       </a>
       <div class="nav-cta">
         <a href="#contact" class="btn btn-primary btn-sm">Request a demo</a>
@@ -463,7 +463,7 @@
             <div class="hud hud-tl">● Real world · Huntington Ave, Boston</div>
             <div class="hud hud-twin">◆ Digital twin</div>
             <div class="flow-steps" id="flowSteps"><span>1 Measure</span><span>2 Test in twin</span><span>3 Act</span><span>4 Verify</span></div>
-            <img class="fallback tw-logo" src="assets/twinet-logo-green.webp" alt="" />
+            <img class="fallback tw-logo" src="assets/twinet-logo-cyan.webp" alt="" />
           </div>
           <div class="readout" aria-hidden="true">
             <div><span>Intent</span><b id="iGoal">—</b></div>
@@ -479,7 +479,7 @@
     <!-- ===================== CTA ===================== -->
     <section id="contact" class="cta">
       <div class="wrap reveal" style="position: relative;">
-        <img src="assets/twinet-logo-green.webp" alt="" class="cta-logo tw-logo" width="340" height="255" loading="lazy" />
+        <img src="assets/twinet-logo-cyan.webp" alt="" class="cta-logo tw-logo" width="340" height="255" loading="lazy" />
         <h2>See your network's twin before your next change.</h2>
         <p class="lead">Tell us about your network and what you want to validate. We'll show you AI-Native 6G TwinForge on a scenario that matters to you.</p>
         <div class="hero-actions">
@@ -522,7 +522,7 @@
         tBtn.textContent = hidden ? "Show notes" : "Hide notes";
       });
 
-      /* ---- staging: compare logo versions (choice remembered per browser) ---- */
+      /* ---- theme: cyan for everyone; staging alone can flip to green to compare (remembered per browser) ---- */
       const LOGOS = [
         ["green", "assets/twinet-logo-green.webp", "Logo: green"],
         ["cyan", "assets/twinet-logo-cyan.webp", "Logo: cyan"],
@@ -532,12 +532,14 @@
         const L = LOGOS.find(l => l[0] === key) || LOGOS[0];
         document.documentElement.dataset.logo = L[0];
         document.querySelectorAll(".tw-logo").forEach(img => (img.src = L[1]));
-        if (lBtn) lBtn.textContent = L[2];
-        try { localStorage.setItem("twinet-logo", L[0]); } catch (e) {}
+        if (lBtn) {
+          lBtn.textContent = L[2];
+          try { localStorage.setItem("twinet-logo", L[0]); } catch (e) {}
+        }
         dispatchEvent(new Event("twinet-theme"));
       };
       let saved = null;
-      try { saved = localStorage.getItem("twinet-logo"); } catch (e) {}
+      if (lBtn) try { saved = localStorage.getItem("twinet-logo"); } catch (e) {}
       if (saved) setLogo(saved);
       if (lBtn) lBtn.addEventListener("click", () => {
         const i = LOGOS.findIndex(l => l[0] === document.documentElement.dataset.logo);
