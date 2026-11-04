@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /index-stage.html
+Disallow: /pre-prod.html
+Disallow: /index-2024.html
+
+Sitemap: https://twinet.tech/sitemap.xml

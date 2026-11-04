@@ -2,74 +2,1336 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TwiNet</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://twinet.tech/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TwiNet" />
+  <meta property="og:url" content="https://twinet.tech/" />
+  <meta property="og:title" content="TwiNet · Digital Twins for Wireless Networks" />
+  <meta property="og:description" content="Real-time digital twins of wireless networks, so operators and vendors can test and trust AI-driven RAN decisions before they hit the field." />
+  <meta property="og:image" content="https://twinet.tech/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>TwiNet · Digital Twins for Wireless Networks</title>
+  <meta name="description" content="TwiNet builds real-time digital twins of wireless networks so operators and vendors can test and trust AI-driven RAN decisions before they hit the field." />
+  <link rel="icon" href="assets/twinet-mark-160.webp" type="image/webp" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #040706;
+      --bg-2: #08100c;
+      --panel: #0c1611;
+      --panel-2: #101d16;
+      --line: #1b2e23;
+      --line-2: #26402f;
+      --text: #e9f1ec;
+      --muted: #9aaba1;
+      --dim: #66786d;
+      --green: #3cf26a;
+      --acc-rgb: 60, 242, 106;
+      --grad-mid: #b9ffcb;
+      --twin-floor: #04120a;
+      --green-2: #22c552;
+      --green-deep: #0d5a26;
+      --silver: #c9d3d8;
+      --silver-2: #8d999f;
+      --amber: #ffb547;
+      --radius: 18px;
+      --maxw: 1200px;
+      --font-head: "Sora", system-ui, sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 108px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img, video, canvas { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+    @media (max-width: 600px) { .wrap { padding: 0 16px; } }
+
+    /* ---------- staging ribbon + draft markers ---------- */
+    .stage-bar {
+      position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+      z-index: 100; display: flex; gap: 10px; align-items: center;
+      background: rgba(20, 14, 2, .92); border: 1px solid #5a4210; color: var(--amber);
+      font: 500 12px/1 var(--font-mono); padding: 8px 10px 8px 14px; border-radius: 999px;
+      backdrop-filter: blur(8px); white-space: nowrap;
+    }
+    @media (max-width: 600px) {
+      .stage-bar { flex-wrap: wrap; justify-content: center; width: calc(100vw - 24px); border-radius: 16px; gap: 6px; font-size: 11px; padding: 8px; }
+      .stage-bar button { padding: 6px 8px; }
+    }
+    /* cyan option: same layout, accent colour follows the cyan logo */
+    html[data-logo="cyan"] { --green: #38c6ff; --green-2: #1fa6e6; --green-deep: #0b4a66; --acc-rgb: 56, 198, 255; --grad-mid: #c4ecff; --twin-floor: #03101a; }
+    html[data-logo^="cyan"] .brand img { filter: drop-shadow(0 0 14px rgba(56, 182, 255, .32)); }
+    html[data-logo^="cyan"] .cta-logo { filter: drop-shadow(0 0 40px rgba(56, 182, 255, .28)); }
+    .stage-bar button {
+      font: inherit; color: var(--bg); background: var(--amber); border: 0;
+      border-radius: 999px; padding: 6px 10px; cursor: pointer;
+    }
+    .todo { position: relative; outline: 1px dashed rgba(255, 181, 71, .65); outline-offset: 4px; border-radius: 6px; }
+    .todo::after {
+      content: attr(data-todo); position: absolute; top: -12px; right: -6px;
+      font: 500 10px/1 var(--font-mono); letter-spacing: .04em; text-transform: uppercase;
+      background: var(--amber); color: #1a1000; padding: 3px 6px; border-radius: 4px;
+      pointer-events: none; white-space: nowrap; z-index: 2;
+    }
+    body.hide-todo .todo { outline: none; }
+    body.hide-todo .todo::after { display: none; }
+
+    /* ---------- nav ---------- */
+    .nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 50;
+      transition: background .3s, border-color .3s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled { background: rgba(4, 7, 6, .82); backdrop-filter: blur(14px); border-color: var(--line); }
+    .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 96px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand img { height: 84px; width: auto; filter: drop-shadow(0 0 14px rgba(var(--acc-rgb), .28)); }
+    .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: flex; gap: 10px; align-items: center; }
+    .menu-btn { display: none; background: none; border: 1px solid var(--line-2); color: var(--text); border-radius: 10px; width: 42px; height: 42px; cursor: pointer; }
+    .menu-btn svg { margin: auto; }
+    @media (max-width: 920px) {
+      .nav-links {
+        display: none; position: absolute; top: 76px; left: 0; right: 0;
+        flex-direction: column; gap: 0; background: rgba(4, 7, 6, .97);
+        border-bottom: 1px solid var(--line); padding: 8px 16px 16px;
+      }
+      .nav-links a { padding: 12px 0; border-bottom: 1px solid var(--line); }
+      .nav.open .nav-links { display: flex; }
+      .nav.open { background: rgba(4, 7, 6, .97); }
+      .menu-btn { display: grid; }
+      .nav .wrap { height: 76px; }
+      .brand img { height: 62px; }
+      .nav-cta .btn { display: none; }
+    }
+
+    /* ---------- buttons ---------- */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+      font: 600 15px/1 var(--font-body); padding: 14px 20px; border-radius: 12px;
+      border: 1px solid transparent; cursor: pointer; transition: transform .15s, box-shadow .2s, background .2s;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--green); color: #021006; box-shadow: 0 0 0 0 rgba(var(--acc-rgb), .0); }
+    .btn-primary:hover { box-shadow: 0 0 28px rgba(var(--acc-rgb), .45); transform: translateY(-1px); }
+    .btn-ghost { border-color: var(--line-2); color: var(--text); background: rgba(255, 255, 255, .02); }
+    .btn-ghost:hover { border-color: var(--green-2); }
+    .btn-sm { padding: 10px 14px; font-size: 14px; border-radius: 10px; }
+
+    /* ---------- shared section bits ---------- */
+    section { position: relative; padding: 120px 0; }
+    @media (max-width: 700px) { section { padding: 80px 0; } }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font: 500 12px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--green);
+    }
+    .eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--green); }
+    h1, h2, h3 { font-family: var(--font-head); letter-spacing: -.02em; line-height: 1.1; }
+    h2 { font-size: clamp(30px, 4.2vw, 48px); font-weight: 700; margin: 16px 0 18px; max-width: 20ch; }
+    .lead { color: var(--muted); font-size: 18px; max-width: 60ch; }
+    .grad { background: linear-gradient(92deg, var(--green) 0%, var(--grad-mid) 55%, var(--silver) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+
+    /* ---------- hero ---------- */
+    .hero { padding: 150px 0 90px; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(900px 500px at 75% 45%, rgba(var(--acc-rgb), .10), transparent 60%),
+        radial-gradient(600px 400px at 10% 90%, rgba(201, 211, 216, .05), transparent 60%);
+      pointer-events: none;
+    }
+    .stars { position: absolute; inset: 0; pointer-events: none; opacity: .7; }
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1.02fr 1fr; gap: 56px; align-items: center; }
+    .hero h1 { font-size: clamp(36px, 4.8vw, 64px); font-weight: 800; margin: 22px 0 22px; }
+    .hero h1 .muted { color: var(--silver-2); font-weight: 600; }
+    .hero .lead { font-size: 19px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+    .hero-meta { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 42px; font: 400 13px/1.4 var(--font-mono); color: var(--dim); }
+    .hero-meta span { display: inline-flex; gap: 8px; align-items: center; }
+    .hero-meta span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+
+    .hero-visual { width: 100%; }
+    .twin-panel {
+      position: relative; aspect-ratio: 1 / 1.08; border-radius: 26px; overflow: hidden;
+      background: linear-gradient(180deg, #8fb0c4 0%, #b9c8cf 22%, #b9c8cf 50%, #020604 50%, var(--twin-floor) 100%);
+      border: 1px solid var(--line-2);
+      box-shadow: 0 40px 120px -40px rgba(var(--acc-rgb), .25), inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+    .twin-panel.look-render { background: linear-gradient(180deg, #13222c 0%, #2a3438 33%, #2a3438 50%, #020604 50%, var(--twin-floor) 100%); }
+    #twin, #flow { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #twin canvas { display: block; }
+    .hud { position: absolute; font: 500 10.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; background: rgba(4, 7, 6, .72); padding: 6px 9px; border-radius: 999px; }
+    .hud-tl { top: 14px; left: 14px; color: var(--silver); }
+    .hud-twin { bottom: 14px; left: 14px; color: var(--green); }
+    .flow-steps {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; gap: 2px;
+      background: rgba(4, 7, 6, .88); border: 1px solid var(--line-2); border-radius: 999px; padding: 3px;
+      font: 500 10px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+    }
+    .flow-steps span { padding: 6px 9px; border-radius: 999px; color: var(--dim); transition: background .3s, color .3s; }
+    .flow-steps span.done { color: var(--green); }
+    .flow-steps span.on { background: var(--green); color: #021006; }
+    .readout {
+      display: grid; grid-template-columns: 1.3fr 1fr; margin-top: 10px;
+      border: 1px solid var(--line-2); border-radius: 14px; background: var(--panel); overflow: hidden;
+      font: 400 11px/1.4 var(--font-mono);
+    }
+    .readout > div { padding: 9px 12px; min-width: 0; }
+    .readout > div:nth-child(even) { border-left: 1px solid var(--line); }
+    .readout > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .readout span { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .07em; font-size: 9.5px; margin-bottom: 3px; white-space: nowrap; }
+    .readout b { color: var(--text); font-weight: 500; }
+    .readout i { font-style: normal; color: var(--muted); }
+    .readout i.ok { color: #d8ff6a; } .readout i.bad { color: #ff8a6a; }
+    .fallback { display: none; }
+    .twin-panel.no-webgl .fallback { display: block; position: absolute; inset: 0; margin: auto; width: 55%; height: auto; }
+    .twin-panel.no-webgl .flow-steps { display: none; }
+    .hero-visual:has(.no-webgl) .readout { display: none; }
+    .panel-cap { margin-top: 10px; text-align: center; font: 400 11px/1.4 var(--font-mono); color: var(--dim); }
+    .panel-cap a { text-decoration: underline; text-decoration-color: var(--line-2); }
+    @media (max-width: 520px) {
+      .flow-steps { font-size: 8.5px; letter-spacing: .02em; }
+      .flow-steps span { padding: 5px 6px; }
+
+    }
+    @keyframes blink { 50% { opacity: .3; } }
+    .hero-in { animation: rise .9s ease both; }
+    .hero-visual.hero-in { animation-delay: .15s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(20px); } }
+    @media (prefers-reduced-motion: reduce) { .hero-in { animation: none; } }
+    @media (max-width: 920px) {
+      .hero { min-height: auto; padding-top: 120px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+      .hero-visual { max-width: 560px; margin: 0 auto; }
+    }
+
+    /* ---------- trust strip ---------- */
+    .strip { padding: 34px 0; border-block: 1px solid var(--line); background: var(--bg-2); }
+    .strip .wrap { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; justify-content: center; }
+    .strip-label { font: 500 12px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+    .strip-items { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .logo-row { display: flex; align-items: flex-start; justify-content: center; flex-wrap: wrap; gap: 26px 30px; }
+    .logo-row figure { display: grid; grid-template-rows: 42px auto; justify-items: center; align-items: center; gap: 10px; width: 160px; }
+    .logo-row img { width: auto; max-width: 160px; }
+    .logo-row figcaption { font: 400 10.5px/1.35 var(--font-mono); color: var(--dim); text-align: center; align-self: start; }
+    @media (max-width: 520px) { .logo-row { gap: 22px 16px; } .logo-row figure { width: 150px; } .logo-row img { max-width: 140px; } }
+    /* logos render as light monochrome on the dark theme; full opacity on hover */
+    .logo-mono { filter: brightness(0) invert(1); opacity: .7; transition: opacity .2s; }
+    .logo-mono:hover { opacity: 1; }
+    .chip { font: 600 14px/1 var(--font-head); color: var(--silver); padding: 12px 18px; border: 1px solid var(--line-2); border-radius: 999px; background: rgba(255, 255, 255, .015); }
+
+    /* ---------- problem ---------- */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; }
+    .gap-list { display: grid; gap: 14px; }
+    .gap {
+      display: grid; grid-template-columns: 52px 1fr; gap: 18px; padding: 22px;
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel);
+    }
+    .gap .num {
+      position: relative; height: 52px; display: grid; place-items: center; border-radius: 12px;
+      border: 1px solid var(--line-2); background: radial-gradient(circle at 50% 40%, rgba(var(--acc-rgb), .14), transparent 70%); color: var(--green);
+    }
+    .gap h3 { font-size: 19px; margin-bottom: 6px; }
+    .gap p { color: var(--muted); font-size: 15px; }
+    .quote-box { margin-top: 36px; padding: 22px 24px; border-left: 2px solid var(--green); background: linear-gradient(90deg, rgba(var(--acc-rgb), .07), transparent); border-radius: 0 12px 12px 0; font-family: var(--font-head); font-size: 20px; line-height: 1.4; }
+    @media (max-width: 920px) { .problem-grid { grid-template-columns: 1fr; gap: 36px; } }
+
+    /* ---------- loop / how it works ---------- */
+    .loop { background: var(--bg-2); border-block: 1px solid var(--line); overflow: hidden; }
+    .loop-head { display: flex; justify-content: space-between; gap: 40px; align-items: end; flex-wrap: wrap; margin-bottom: 56px; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+    .steps::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 27px; height: 1px;
+      background: linear-gradient(90deg, var(--silver-2), var(--green) 50%, var(--silver-2));
+      opacity: .5;
+    }
+    .step { position: relative; padding-right: 26px; }
+    .step .dot {
+      width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 26px;
+      background: var(--bg); border: 1px solid var(--line-2); position: relative; z-index: 1;
+      font: 500 13px/1 var(--font-mono); color: var(--green);
+    }
+    .step.active .dot { border-color: var(--green); box-shadow: 0 0 0 6px rgba(var(--acc-rgb), .08), 0 0 26px rgba(var(--acc-rgb), .35); }
+    .step .tag { font: 500 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+    .step h3 { font-size: 22px; margin: 8px 0 10px; }
+    .step p { color: var(--muted); font-size: 15px; }
+    @media (max-width: 920px) {
+      .steps { grid-template-columns: 1fr 1fr; row-gap: 40px; }
+      .steps::before { display: none; }
+    }
+    @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+
+    /* ---------- product ---------- */
+    .product-card {
+      display: grid; grid-template-columns: 1fr; gap: 0; border: 1px solid var(--line-2);
+      border-radius: 28px; overflow: hidden; background: var(--panel);
+    }
+    .product-copy { padding: 40px 48px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 18px 48px; align-items: start; }
+    .product-copy .feat { grid-row: 1 / 3; grid-column: 2; margin: 0; }
+    .product-name { font-family: var(--font-head); font-size: clamp(30px, 3.4vw, 42px); font-weight: 800; line-height: 1.05; }
+    .product-name small { display: block; font: 500 13px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .feat { display: grid; gap: 12px; margin: 6px 0 10px; }
+    .feat li { list-style: none; display: grid; grid-template-columns: 22px 1fr; gap: 10px; color: var(--muted); font-size: 15px; }
+    .feat li::before { content: ""; width: 14px; height: 14px; margin-top: 4px; border-radius: 4px; border: 1px solid var(--green); background: rgba(var(--acc-rgb), .15); }
+    .feat b { color: var(--text); font-weight: 600; }
+    .product-media { order: -1; background: #000; border-bottom: 1px solid var(--line-2); }
+    .product-media video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+    @media (max-width: 920px) {
+      .product-copy { grid-template-columns: 1fr; padding: 28px 22px; }
+      .product-copy .feat { grid-row: auto; grid-column: auto; }
+    }
+
+    /* ---------- use cases ---------- */
+    .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 52px; }
+    .case {
+      position: relative; padding: 28px; border-radius: var(--radius); border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel), var(--bg)); overflow: hidden; transition: border-color .25s, transform .25s;
+    }
+    .case:hover { border-color: var(--green-deep); transform: translateY(-3px); }
+    .case .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; border: 1px solid var(--line-2); color: var(--green); margin-bottom: 22px; }
+    .case h3 { font-size: 19px; margin-bottom: 8px; }
+    .case p { color: var(--muted); font-size: 15px; }
+    @media (max-width: 920px) { .cases { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .cases { grid-template-columns: 1fr; } }
+
+    /* ---------- audiences ---------- */
+    .aud { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-top: 48px; }
+    .aud > div { padding: 28px 24px; border-right: 1px solid var(--line); }
+    .aud > div:last-child { border-right: 0; }
+    .aud .who { font: 500 12px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    .aud h3 { font-size: 18px; margin-bottom: 8px; }
+    .aud p { color: var(--muted); font-size: 14.5px; }
+    @media (max-width: 920px) {
+      .aud { grid-template-columns: 1fr 1fr; }
+      .aud > div { border-bottom: 1px solid var(--line); }
+      .aud > div:nth-child(2n) { border-right: 0; }
+    }
+    @media (max-width: 560px) { .aud { grid-template-columns: 1fr; } .aud > div { border-right: 0; } }
+
+    /* ---------- clients ---------- */
+    .client-card {
+      margin-top: 44px; display: grid; grid-template-columns: 200px 1fr; grid-template-rows: auto auto; gap: 14px 40px; align-items: center;
+      padding: 36px 40px; border: 1px solid var(--line-2); border-radius: 22px; background: linear-gradient(135deg, var(--panel), var(--bg));
+    }
+    .client-logo { grid-row: 1 / 3; width: 100%; max-width: 180px; height: auto; opacity: .85; }
+    .client-card blockquote { font: 600 clamp(19px, 2vw, 24px)/1.4 var(--font-head); letter-spacing: -.01em; color: var(--text); }
+    .client-card figcaption { font-size: 14px; color: var(--muted); }
+    .client-card figcaption b { color: var(--text); font-weight: 600; }
+    @media (max-width: 700px) {
+      .client-card { grid-template-columns: 1fr; padding: 26px 22px; }
+      .client-logo { grid-row: auto; max-width: 140px; }
+    }
+
+    /* ---------- research ---------- */
+    .research { background: var(--bg-2); border-block: 1px solid var(--line); }
+    .research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+    .pubs { display: grid; gap: 12px; }
+    .pub { padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+    .pub .venue { font: 500 11px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+    .pub h3 { font-family: var(--font-body); font-weight: 600; font-size: 16px; letter-spacing: 0; line-height: 1.4; }
+    @media (max-width: 920px) { .research-grid { grid-template-columns: 1fr; gap: 36px; } }
+
+    /* ---------- team ---------- */
+    .team { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 48px; }
+    .member { padding: 26px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: center; }
+    .avatar { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font: 700 20px/1 var(--font-head); color: var(--green); background: radial-gradient(circle at 30% 30%, #1d3a28, #07120b); border: 1px solid var(--line-2); }
+    .member h3 { font-size: 18px; }
+    .member .role { font: 500 12px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--green); margin-top: 4px; }
+    .member p { grid-column: 1 / -1; color: var(--muted); font-size: 14.5px; }
+    @media (max-width: 920px) { .team { grid-template-columns: 1fr; } }
+
+    /* ---------- numbers ---------- */
+    .numbers { border-bottom: 1px solid var(--line); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .stat { padding: 8px 28px; border-left: 1px solid var(--line-2); }
+    .stat:first-child { border-left: 0; padding-left: 0; }
+    .stat .val { font: 800 clamp(30px, 3.4vw, 48px)/1 var(--font-head); letter-spacing: -.03em; margin-bottom: 12px; white-space: nowrap; }
+    .stat .lbl { color: var(--muted); font-size: 14.5px; }
+    .src { margin-top: 30px; font: 400 12px/1.5 var(--font-mono); color: var(--dim); }
+    @media (max-width: 920px) {
+      .stats { grid-template-columns: 1fr; row-gap: 30px; }
+      .stat { border-left: 0; padding-left: 0; }
+    }
+    @media (max-width: 480px) { .stats { grid-template-columns: 1fr; } .stat { border-left: 0; padding-left: 0; } }
+
+    /* ---------- toolkit ---------- */
+    .sub-h { font-size: clamp(24px, 2.8vw, 32px); font-weight: 700; margin: 14px 0 28px; }
+    .toolkit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .tool { background: var(--bg); padding: 26px 24px; transition: background .25s; }
+    .tool:hover { background: var(--panel); }
+    .tool .tier { font: 500 11px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    .tool h3 { font-size: 19px; margin-bottom: 8px; }
+    .tool p { color: var(--muted); font-size: 14.5px; }
+    @media (max-width: 920px) { .toolkit { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .toolkit { grid-template-columns: 1fr; } }
+
+    /* ---------- awards ---------- */
+    .award-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px; }
+    .award-card { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--panel); }
+    .award-card img { height: 30px; width: auto; max-width: 130px; opacity: .85; }
+    .award-card b { display: block; font-size: 15px; color: var(--text); font-weight: 600; line-height: 1.3; }
+    .award-card span { font-size: 13px; color: var(--muted); }
+    .award-card a { text-decoration: underline; text-decoration-color: var(--line-2); }
+    @media (max-width: 480px) { .award-cards { grid-template-columns: 1fr; } }
+    .awards { list-style: none; margin-top: 22px; display: grid; gap: 12px; }
+    .awards li { position: relative; padding-left: 26px; color: var(--muted); font-size: 15px; }
+    .awards li::before { content: "★"; position: absolute; left: 0; top: 1px; color: var(--green); font-size: 13px; }
+    .awards b { color: var(--text); font-weight: 600; }
+
+    /* ---------- CTA ---------- */
+    .cta { padding: 140px 0 120px; text-align: center; overflow: hidden; }
+    .cta::before { content: ""; position: absolute; inset: 0; background: radial-gradient(700px 360px at 50% 40%, rgba(var(--acc-rgb), .14), transparent 70%); pointer-events: none; }
+    .cta-logo { width: min(340px, 72vw); margin: 0 auto 30px; filter: drop-shadow(0 0 40px rgba(var(--acc-rgb), .25)); }
+    .cta h2 { margin: 0 auto 16px; max-width: 18ch; }
+    .cta .lead { margin: 0 auto; }
+    .cta .hero-actions { justify-content: center; }
+    .mail { display: inline-block; margin-top: 26px; font: 500 15px/1 var(--font-mono); color: var(--green); border-bottom: 1px dashed var(--green-deep); padding-bottom: 4px; }
+
+    /* ---------- footer ---------- */
+    footer { border-top: 1px solid var(--line); padding: 36px 0 90px; color: var(--dim); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+    footer nav { display: flex; gap: 22px; flex-wrap: wrap; }
+    footer a:hover { color: var(--text); }
+  </style>
+  <style>@media (max-width: 920px) { .nav-cta .btn { display: inline-flex; } }</style>
 </head>
 <body>
-  <!-- Home Section -->
-  <section id="home" class="section home-section">
-    <div class="container">
-      <img src="twinet-logo.png" alt="TwiNet Logo" class="logo" />
-      <h1 class="tagline">Digital Twins for Wireless Networks</h1>
-      <p class="subtitle">
-        Real-time, connected multiverse where you can test and trust AI-driven RAN decisions;<br>
-        <span class="emphasis">…before they hit the field</span>
-      </p>
-      <div class="contact">
-        <a href="mailto:info@twinet.tech">Contact us: info@twinet.tech</a>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a href="#top" class="brand" aria-label="TwiNet home">
+        <img class="tw-logo" src="assets/twinet-logo-green.webp" alt="TwiNet" width="112" height="84" />
+      </a>
+      <div class="nav-cta">
+        <a href="#contact" class="btn btn-primary btn-sm">Request a demo</a>
       </div>
     </div>
-  </section>
+  </header>
 
-  <!-- Products Section -->
-  <section id="products" class="section products-section">
-    <div class="container">
-      <div class="product-card">
-        <h3 class="product-name">AI-Native 6G TwinForge</h3>
-        <p class="product-description">
-          Our flagship digital twin solution for wireless network optimization and AI decision validation
-        </p>
-        <div class="video-container">
-          <!-- Replace with your video files -->
-          <video controls preload="metadata" playsinline style="width: 100%; max-width: 800px;">
-            <source src="airmap-demo.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <!-- If video files are not available, uncomment this placeholder:
-          <div class="video-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="2">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
-            <p>AIRMAP Demo Video</p>
+  <main id="top">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero">
+      <canvas class="stars" id="stars" aria-hidden="true"></canvas>
+      <div class="wrap hero-grid">
+        <div class="hero-in">
+          <span class="eyebrow">Digital twins for wireless networks</span>
+          <h1>Test every AI&#8209;RAN decision in its twin.<br /><span class="muted">Ship only the ones you trust.</span></h1>
+          <p class="lead">
+            TwiNet builds real-time, connected digital twins of wireless networks: a multiverse where you can
+            test and trust AI-driven RAN decisions <em>before they hit the field</em>.
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">Request a demo
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
           </div>
-          -->
+          <div class="hero-meta">
+            <span>Live bidirectional link</span>
+            <span>Radio maps in 4 ms</span>
+            <span>Open RAN native</span>
+          </div>
         </div>
-        <div class="product-link">
-          <a href="https://digiran.colosseum.net/login" target="_blank" class="airmap-button">
-            Try TwiNet's 6G TwinForge
-          </a>
+
+        <div class="hero-visual hero-in">
+          <div class="twin-panel" id="twinPanel" role="img" aria-label="Animation: real streets around Huntington Ave in Boston, with cell antennas, cars, phones, a drone and a trolley, mirrored below by their 3D digital twin. Measurements flow down to the twin, a new policy is tested there until it meets the intent, and the validated action flows back up to update the real network.">
+            <div id="twin"></div>
+            <canvas id="flow" aria-hidden="true"></canvas>
+            <div class="hud hud-tl">● Real world · Huntington Ave, Boston</div>
+            <div class="hud hud-twin">◆ Digital twin</div>
+            <div class="flow-steps" id="flowSteps"><span>1 Measure</span><span>2 Test in twin</span><span>3 Act</span><span>4 Verify</span></div>
+            <img class="fallback tw-logo" src="assets/twinet-logo-green.webp" alt="" />
+          </div>
+          <div class="readout" aria-hidden="true">
+            <div><span>Intent</span><b id="iGoal">—</b></div>
+            <div><span>Field now</span><b id="iNow">—</b></div>
+            <div><span>Policy in twin</span><b id="iCand">—</b></div>
+            <div><span>Twin result</span><b id="iVal">—</b></div>
+          </div>
+          <p class="panel-cap">Live twin of Huntington Ave, Boston · aerial imagery: USGS · buildings &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
+    <!-- ===================== CTA ===================== -->
+    <section id="contact" class="cta">
+      <div class="wrap reveal" style="position: relative;">
+        <img src="assets/twinet-logo-green.webp" alt="" class="cta-logo tw-logo" width="340" height="255" loading="lazy" />
+        <h2>See your network's twin before your next change.</h2>
+        <p class="lead">Tell us about your network and what you want to validate. We'll show you AI-Native 6G TwinForge on a scenario that matters to you.</p>
+        <div class="hero-actions">
+          <a href="mailto:info@twinet.tech?subject=AI-Native%206G%20TwinForge%20demo%20request" class="btn btn-primary">Request a demo</a>
+        </div>
+        <a class="mail" href="mailto:info@twinet.tech">info@twinet.tech</a>
+      </div>
+    </section>
+  </main>
+
   <footer>
-    <p>&copy; 2024 TwiNet. All rights reserved.</p>
+    <div class="wrap">
+      <span>&copy; 2024 TwiNet. All rights reserved.</span>
+      <nav>
+        <a href="mailto:info@twinet.tech">Contact</a>
+      </nav>
+    </div>
   </footer>
 
+
   <script>
-    // Smooth scrolling for anchor links (if you add navigation later)
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
+    (() => {
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ---- nav ---- */
+      const nav = document.getElementById("nav");
+      const onScroll = () => nav.classList.toggle("scrolled", scrollY > 10);
+      addEventListener("scroll", onScroll, { passive: true }); onScroll();
+      const menuBtn = document.getElementById("menuBtn");
+      if (menuBtn) menuBtn.addEventListener("click", () => {
+        const open = nav.classList.toggle("open");
+        menuBtn.setAttribute("aria-expanded", open);
       });
-    });
+      document.querySelectorAll("#navLinks a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
+
+      /* ---- draft notes toggle ---- */
+      const tBtn = document.getElementById("todoToggle");
+      if (tBtn) tBtn.addEventListener("click", () => {
+        const hidden = document.body.classList.toggle("hide-todo");
+        tBtn.textContent = hidden ? "Show notes" : "Hide notes";
+      });
+
+      /* ---- staging: compare logo versions (choice remembered per browser) ---- */
+      const LOGOS = [
+        ["green", "assets/twinet-logo-green.webp", "Logo: green"],
+        ["cyan", "assets/twinet-logo-cyan.webp", "Logo: cyan"],
+      ];
+      const lBtn = document.getElementById("logoToggle");
+      const setLogo = key => {
+        const L = LOGOS.find(l => l[0] === key) || LOGOS[0];
+        document.documentElement.dataset.logo = L[0];
+        document.querySelectorAll(".tw-logo").forEach(img => (img.src = L[1]));
+        if (lBtn) lBtn.textContent = L[2];
+        try { localStorage.setItem("twinet-logo", L[0]); } catch (e) {}
+        dispatchEvent(new Event("twinet-theme"));
+      };
+      let saved = null;
+      try { saved = localStorage.getItem("twinet-logo"); } catch (e) {}
+      if (saved) setLogo(saved);
+      if (lBtn) lBtn.addEventListener("click", () => {
+        const i = LOGOS.findIndex(l => l[0] === document.documentElement.dataset.logo);
+        setLogo(LOGOS[(i + 1) % LOGOS.length][0]);
+      });
+
+      /* ---- reveal on scroll ---- */
+      const io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      }), { threshold: 0.12 });
+      document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+      /* ---- how-it-works step cycling ---- */
+      const steps = [...document.querySelectorAll(".step")];
+      let si = 0;
+      if (!reduce && steps.length) setInterval(() => {
+        steps[si].classList.remove("active");
+        si = (si + 1) % steps.length;
+        steps[si].classList.add("active");
+      }, 2200);
+
+      /* ---- seeded random ---- */
+      let seed = 7;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+      /* ---- starfield ---- */
+      const sc = document.getElementById("stars");
+      const sctx = sc.getContext("2d");
+      function drawStars() {
+        const r = devicePixelRatio || 1;
+        sc.width = sc.offsetWidth * r; sc.height = sc.offsetHeight * r;
+        sctx.clearRect(0, 0, sc.width, sc.height);
+        seed = 11;
+        const n = Math.floor(sc.offsetWidth * sc.offsetHeight / 5000);
+        for (let i = 0; i < n; i++) {
+          const x = rnd() * sc.width, y = rnd() * sc.height, s = rnd() * 1.2 * r + .2;
+          sctx.fillStyle = rnd() > .82 ? "rgba(var(--acc-rgb),.8)" : "rgba(220,235,226,.55)";
+          sctx.globalAlpha = .25 + rnd() * .6;
+          sctx.fillRect(x, y, s, s);
+        }
+        sctx.globalAlpha = 1;
+      }
+
+      drawStars();
+      addEventListener("resize", drawStars);
+    })();
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+/* Buildings and streets around Huntington Ave, Boston. Data (c) OpenStreetMap contributors, ODbL. Local meters: x east, z south. b: [height, x,z,...], r: [width, isHuntington, x,z,...] */
+window.TWINET_CITY = {"b":[[10.8,129.1,-44.3,124.6,-49.7,125.8,-51.0,95.0,-87.2,129.8,-125.4,174.8,-86.8,137.5,-49.1],[14.4,-296.4,-35.3,-345.0,-58.3,-322.8,-104.5,-274.2,-81.5],[15,-249.3,-132.4,-256.9,-116.4,-265.0,-120.2,-263.9,-122.5,-267.7,-124.3,-268.8,-122.1,-275.9,-125.4,-270.4,-136.8,-261.2,-132.4,-259.2,-136.7],[25.2,148.1,279.5,84.5,221.9,120.1,182.9,117.2,180.4,122.7,174.4,126.7,170.2,129.0,172.5,143.5,156.6,165.2,176.3,161.6,180.2,166.6,185.0,164.6,187.0,138.7,213.9,136.0,216.6,132.0,220.7,170.2,255.3,172.9,257.7,170.1,260.7,168.6,262.3,165.9,259.9],[18,-14.1,-168.5,-26.1,-191.0,-16.2,-196.2,-11.8,-198.4,-8.8,-192.6,-12.3,-190.7,-11.0,-188.3,-7.6,-190.1,-0.1,-175.8],[12.0,198.9,-259.7,181.0,-275.6,151.9,-302.1,159.7,-310.6,175.1,-327.5,182.7,-335.9,203.2,-317.5,229.5,-293.4,222.2,-285.0,206.8,-268.1],[18.0,-16.8,250.1,-26.5,232.1,-18.4,228.2,-21.9,221.2,-18.6,219.5,-26.2,207.0,-29.8,199.9,-43.1,175.2,-37.3,171.9,-39.0,168.9,-38.0,166.0,-37.5,165.8,-34.8,166.6,-33.4,169.5,-30.6,174.0,-11.7,163.0,-9.2,161.5,10.3,150.6,12.0,149.9,13.2,152.2,27.1,177.8,40.9,170.2,43.4,175.0,48.0,184.0,50.7,189.3,44.3,192.5,45.7,195.2,38.2,199.0,39.3,201.6,32.2,205.7,33.1,208.1,26.9,211.3,27.6,214.0,21.3,217.3,23.1,219.8,15.5,223.8,16.3,226.1,9.1,229.6,10.4,231.7,3.5,235.4,4.7,238.3],[20,-173.9,81.2,-179.4,71.6,-187.1,58.1,-137.0,29.7,-129.8,42.3,-117.2,64.4,-110.5,60.6,-101.1,55.2,-94.6,66.6,-160.8,104.1],[21,-188.8,302.7,-210.1,301.5,-208.9,281.8,-188.6,283.0,-188.2,277.6,-182.9,277.9,-181.7,258.1,-162.2,259.3,-163.5,281.8,-163.7,282.3,-163.8,282.8,-164.0,283.3,-164.2,283.8,-164.4,284.3,-164.6,284.8,-164.8,285.2,-165.0,285.7,-165.3,286.2,-165.5,286.7,-165.8,287.1,-166.0,287.6,-166.3,288.0,-166.5,288.5,-166.8,288.9,-167.1,289.4,-167.4,289.8,-167.7,290.2,-168.0,290.7,-168.3,291.1,-168.7,291.5,-169.0,291.9,-169.3,292.3,-169.7,292.7,-170.0,293.1,-170.4,293.5,-170.7,293.9,-171.1,294.2,-171.5,294.6,-171.9,295.0,-172.3,295.3,-172.7,295.7,-173.1,296.0,-173.5,296.3,-173.9,296.7,-174.3,297.0,-174.7,297.3,-175.2,297.6,-175.6,297.9,-176.0,298.2,-176.5,298.4,-176.9,298.7,-177.4,299.0,-177.9,299.2,-178.3,299.5,-178.8,299.7,-179.3,300.0,-179.7,300.2,-180.2,300.4,-180.7,300.6,-181.2,300.8,-181.7,301.0,-182.2,301.2,-182.7,301.3,-183.2,301.5,-183.7,301.7,-184.2,301.8,-184.7,302.0,-185.2,302.1,-185.7,302.2,-186.2,302.3,-186.8,302.4,-187.3,302.5,-187.8,302.6,-188.3,302.7],[21,-89.9,-78.7,-91.3,-79.2,-92.3,-81.2,-91.8,-82.4,-93.5,-85.6,-94.9,-85.9,-95.9,-87.8,-95.4,-89.3,-99.0,-95.9,-100.3,-96.2,-101.5,-98.0,-100.9,-100.1,-98.9,-101.3,-97.4,-100.7,-91.6,-103.9,-91.1,-105.4,-89.3,-106.4,-87.9,-105.9,-86.5,-106.6,-86.1,-108.0,-84.2,-109.1,-82.9,-108.6,-76.8,-111.8,-76.4,-113.3,-74.6,-114.2,-73.2,-113.8,-70.4,-115.2,-70.1,-116.6,-68.1,-117.6,-66.8,-117.2,-60.8,-120.3,-60.4,-121.7,-58.5,-122.6,-57.1,-122.2,-56.0,-122.8,-55.5,-124.2,-53.7,-125.2,-52.3,-124.8,-46.4,-127.9,-45.9,-129.3,-44.1,-130.3,-42.4,-129.7,-31.5,-109.4,-41.7,-104.1,-47.0,-114.1,-53.7,-110.6,-48.3,-100.4,-59.1,-94.8,-64.6,-105.1,-68.4,-103.2,-62.9,-92.8,-72.9,-87.6,-78.0,-97.4,-85.5,-93.5,-80.4,-83.8],[15,-16.3,-167.6,-38.8,-155.4,-51.1,-177.7,-28.6,-189.9],[12,-279.6,-129.9,-307.0,-143.0,-304.7,-147.8,-309.4,-150.1,-305.4,-158.4,-301.3,-156.5,-299.0,-161.1,-271.0,-147.8],[18.0,-307.8,81.8,-325.0,73.6,-308.2,40.5,-294.9,46.5,-305.3,65.6,-310.3,62.9,-313.1,68.1,-303.0,73.6,-289.5,49.0,-268.0,60.8],[28.8,188.2,-96.4,159.2,-123.2,164.7,-129.1,159.2,-134.2,153.1,-127.7,141.8,-138.1,152.8,-149.8,198.6,-107.5],[18.0,64.2,66.6,58.7,56.4,50.0,61.0,30.3,24.3,37.2,20.6,34.8,16.0,42.9,11.7,45.3,16.1,49.4,14.0,59.6,32.9,76.4,24.0,65.7,4.0,84.6,-6.0,105.8,33.5,94.7,39.4,99.3,48.0],[18.0,-90.4,172.8,-100.0,156.0,-58.2,132.3,-48.6,149.1],[18.0,-276.7,-27.2,-279.4,-28.4,-269.0,-48.9,-268.9,-49.3,-268.7,-49.7,-268.5,-50.1,-268.2,-50.4,-267.9,-50.7,-267.6,-50.9,-267.2,-51.1,-266.8,-51.3,-266.4,-51.4,-265.9,-51.4,-265.5,-51.4,-265.1,-51.3,-264.7,-51.2,-264.3,-51.0,-263.9,-50.7,-263.6,-50.4,-263.4,-50.1,-263.0,-49.3,-256.3,-30.8,-262.5,-19.5],[12,283.6,296.4,245.2,244.0,276.1,217.3,314.5,269.9],[12,168.0,-140.1,153.9,-153.1,181.8,-183.1,195.9,-170.0],[21,-280.1,-156.3,-298.2,-164.6,-296.8,-167.8,-297.6,-168.7,-296.0,-172.0,-294.9,-172.0,-287.8,-168.8,-288.7,-166.8,-286.7,-165.8,-283.6,-172.3,-284.1,-174.0,-285.9,-174.8,-287.6,-171.3,-293.3,-173.9,-292.9,-174.6,-293.9,-175.1,-292.4,-178.3,-291.4,-178.4,-289.1,-183.2,-260.9,-170.1,-265.7,-159.9,-266.4,-160.2,-267.0,-158.8,-273.2,-161.7,-270.6,-167.3,-274.3,-168.9],[24,136.9,65.5,122.9,39.3,165.1,16.9,179.1,43.0],[18,-226.8,259.7,-229.0,296.5,-244.5,295.7,-242.3,258.6],[12,-194.8,251.4,-213.8,250.3,-214.3,250.2,-214.8,250.1,-215.2,250.0,-215.6,249.7,-216.0,249.4,-216.4,249.1,-216.7,248.7,-217.0,248.4,-217.2,247.9,-217.4,247.5,-217.5,247.0,-217.6,246.1,-216.9,234.2,-212.0,234.5,-211.8,231.1,-211.7,230.6,-211.6,230.1,-211.5,229.7,-211.2,229.3,-210.9,228.9,-210.6,228.5,-210.3,228.2,-209.9,227.9,-209.4,227.7,-209.0,227.5,-208.5,227.4,-207.6,227.4,-193.4,228.2,-193.0,228.2,-192.5,228.4,-192.0,228.5,-191.6,228.8,-191.2,229.0,-190.8,229.4,-190.5,229.7,-190.3,230.1,-190.0,230.6,-189.9,231.0,-189.8,231.5,-189.7,232.4,-190.6,247.7,-190.7,248.1,-190.8,248.6,-190.9,249.1,-191.2,249.5,-191.4,249.9,-191.8,250.3,-192.1,250.6,-192.5,250.8,-193.0,251.1,-193.4,251.2,-193.9,251.3],[21.6,235.7,251.3,263.1,288.2,250.5,297.4,247.8,293.7,244.1,296.5,241.6,293.2,245.4,290.4,236.1,277.9,227.0,284.5,240.0,302.1,227.5,311.2,203.3,278.6],[15,308.6,240.1,285.6,209.4,318.0,181.7,332.3,194.5,308.4,214.8,312.8,219.5,315.1,217.7,323.5,229.0],[32,170.5,8.3,169.8,8.3,169.2,8.3,168.5,8.2,167.9,8.2,167.2,8.0,166.6,7.9,165.9,7.8,165.3,7.6,164.7,7.4,164.1,7.2,163.5,7.0,162.9,6.7,162.3,6.4,161.7,6.1,161.1,5.8,160.6,5.5,160.0,5.1,159.5,4.8,159.0,4.4,158.5,4.0,158.0,3.5,157.5,3.1,157.0,2.6,156.7,2.2,133.6,-19.2,134.2,-27.7,169.3,-44.9,193.5,-71.5,243.8,-26.0,217.7,-5.9,180.9,5.2,180.4,5.5,179.8,5.9,179.3,6.2,178.7,6.5,178.1,6.7,177.5,7.0,176.9,7.2,176.3,7.4,175.6,7.6,175.0,7.8,174.3,7.9,173.7,8.1,173.1,8.2,172.4,8.2,171.8,8.3,171.1,8.3],[18.0,-252.5,-202.2,-257.8,-204.7,-257.1,-206.2,-263.4,-209.1,-264.9,-205.7,-274.7,-210.2,-265.2,-230.6,-255.5,-226.1,-257.0,-222.8,-251.2,-220.1,-250.6,-221.4,-244.8,-218.8],[24,-247.2,125.6,-259.7,100.6,-225.5,82.2,-212.6,107.4,-232.0,118.1],[18,112.8,31.1,109.5,22.4,118.3,17.2,102.9,-12.5,117.5,-20.4,137.9,16.3],[18,-206.2,-294.3,-194.5,-291.9,-208.7,-224.6,-230.1,-229.1,-225.7,-249.9,-215.3,-247.8,-214.5,-251.8,-225.0,-254.0,-221.3,-271.9,-210.9,-269.7,-210.1,-273.8,-220.5,-276.0,-216.5,-294.8,-206.5,-292.8],[7.2,-151.3,200.4,-163.9,166.6,-115.3,139.1,-95.8,192.3],[15,88.5,118.1,78.8,100.1,122.0,77.1,131.7,95.1],[12,-256.9,-176.3,-265.8,-180.5,-264.8,-182.6,-276.2,-188.1,-277.3,-185.8,-284.9,-189.4,-278.2,-203.3,-270.4,-199.6,-271.2,-198.0,-259.3,-192.3,-258.4,-194.1,-250.2,-190.2],[14.4,-221.1,-57.4,-237.5,-87.6,-242.3,-96.4,-227.0,-104.6,-225.6,-102.1,-202.6,-115.6,-192.7,-97.5,-194.7,-95.2,-197.1,-93.9,-193.2,-86.7,-194.6,-85.9,-209.9,-77.7,-211.2,-80.1,-212.3,-79.6,-213.5,-78.9,-206.2,-65.5],[18,-286.8,-113.7,-314.8,-127.1,-308.0,-141.1,-298.6,-136.7,-299.7,-134.5,-291.2,-130.5,-290.0,-132.9,-279.9,-128.0],[36.0,-299.7,267.9,-307.7,254.0,-278.6,238.8,-297.4,203.7,-283.1,196.0,-268.3,224.0,-262.9,234.1,-263.8,235.4,-263.4,236.4,-266.0,237.5,-260.8,247.0],[18.0,-37.5,130.2,-40.3,125.3,-53.3,102.5,-66.5,77.4,-65.3,76.7,-36.5,61.3,-26.5,78.8,-39.8,86.3,-30.0,103.4,-16.7,95.8,-7.0,112.9],[25.2,48.4,0.4,17.6,-52.8,36.7,-62.6,88.2,-89.1,98.1,-73.2,102.5,-75.6,106.4,-70.4,118.3,-57.9,116.0,-56.1,83.7,-40.2,83.1,-41.6,83.5,-41.8,83.1,-42.5,82.7,-42.3,58.7,-30.1,55.9,-28.7,60.6,-20.5,60.9,-20.1,67.1,-9.4],[15,-192.1,-177.9,-204.4,-183.5,-196.0,-201.4,-188.5,-218.6,-184.1,-249.4,-162.6,-245.2,-173.2,-215.4,-174.1,-215.9,-179.4,-203.5],[12,244.1,-156.6,225.6,-173.3,262.7,-214.3,281.2,-197.6],[26,-193.7,14.4,-196.6,15.2,-199.5,15.6,-202.7,15.7,-206.3,15.9,-209.9,15.6,-212.6,15.1,-214.5,14.6,-216.0,14.2,-217.8,13.3,-219.1,-5.1,-216.1,-6.8,-219.8,-14.3,-230.4,-33.3,-183.5,-58.4,-157.5,-10.9,-158.7,-10.1,-155.6,-4.4],[10.8,-276.7,-27.2,-262.5,-19.5,-265.4,-14.2,-270.9,-17.2,-274.1,-11.3,-269.2,-8.7,-278.3,7.9,-291.9,0.5],[18.0,-70.1,66.7,-79.4,50.3,-64.1,41.6,-67.9,34.9,-70.5,30.3,-72.3,27.2,-75.9,20.8,-91.3,29.5,-100.1,14.0,-68.0,-4.1,-53.5,21.3,-38.0,48.5,-41.5,50.4],[18.0,19.0,18.1,3.3,-9.2,-12.0,-35.5,13.3,-50.0,23.0,-33.3,34.4,-13.6,44.3,3.5],[7.2,-141.0,228.9,-147.9,228.9,-150.4,208.9,-141.3,207.6],[18.0,-96.3,205.9,-81.0,231.3,-119.0,253.2,-127.9,237.1,-133.5,226.9],[18,-253.2,-148.3,-244.1,-144.4,-249.3,-132.4,-259.2,-136.7,-258.9,-137.3,-268.0,-141.3,-262.6,-152.8,-255.4,-149.3,-257.3,-144.9,-255.1,-143.9],[15,-256.9,-116.4,-263.5,-102.5,-282.5,-111.5,-275.9,-125.4,-268.8,-122.1,-269.6,-120.4,-265.8,-118.6,-265.0,-120.2],[21.6,-287.5,168.3,-300.3,175.1,-303.2,172.3,-313.5,181.5,-315.5,179.7,-325.2,190.7,-326.8,189.3,-334.7,201.4,-336.1,200.6,-341.5,213.9,-342.6,213.0,-346.2,227.5,-347.3,241.2,-315.5,256.5,-308.0,240.2,-329.4,230.4,-326.6,222.6,-325.1,219.5,-322.7,215.1,-326.7,212.8,-323.8,207.9,-320.2,210.5,-312.3,201.2,-304.0,194.6,-274.2,179.5,-269.2,176.9,-275.8,173.8],[15,-30.9,248.8,-37.1,251.7,-33.1,258.9,-49.8,266.5,-87.9,303.3,-105.8,284.8,-65.3,245.7,-61.8,243.8,-63.1,241.3,-58.0,238.6,-52.2,235.4,-50.9,237.7,-43.9,233.8,-43.5,233.6,-43.0,233.4,-42.5,233.3,-42.1,233.3,-41.6,233.3,-41.1,233.3,-40.6,233.5,-40.2,233.6,-39.7,233.9,-39.3,234.2,-39.0,234.5,-38.4,235.2],[18.0,-81.0,231.3,-96.3,205.9,-97.8,203.4,-58.0,180.8,-41.7,208.6,-65.5,222.3],[18,-223.3,241.0,-241.2,239.2,-242.3,258.6,-226.8,259.7,-224.4,259.9],[18,-197.4,205.6,-170.7,196.5,-169.9,198.3,-169.1,200.0,-168.4,201.8,-167.6,203.6,-166.9,205.4,-166.2,207.3,-165.6,209.1,-165.0,211.0,-164.4,212.8,-163.9,214.7,-163.4,216.6,-162.9,218.5,-162.5,220.4,-162.0,222.3,-161.7,224.2,-161.3,226.1,-161.0,228.1,-160.7,230.0,-160.5,231.9,-160.3,233.9,-160.1,235.8,-160.0,237.8,-159.9,239.7,-159.8,241.7,-159.8,243.6,-159.8,245.6,-159.8,247.5,-159.9,250.1,-182.8,248.8,-181.1,219.0,-198.3,218.0],[18,-241.2,239.2,-238.5,193.4,-238.4,192.9,-238.3,192.5,-238.1,192.0,-237.9,191.6,-237.6,191.2,-237.3,190.8,-236.9,190.5,-236.5,190.2,-236.1,190.0,-235.7,189.8,-235.2,189.7,-234.7,189.7,-234.2,189.7,-233.7,189.8,-232.9,190.0,-197.4,205.6,-198.3,218.0,-217.6,216.9,-219.1,241.2,-223.3,241.0],[20,39.3,80.3,44.4,77.6,49.8,87.7,62.0,81.2,67.9,92.2,65.3,93.6,57.1,98.0,73.1,127.8,35.6,147.7,28.6,151.4,25.8,146.1,23.7,142.1,19.7,144.2,16.9,138.9,10.6,142.3,-0.8,120.9,4.2,118.2,1.9,113.9,9.0,110.1,3.6,100.1],[18.0,-19.4,58.1,16.3,39.2,19.1,37.5,9.6,19.1,-11.0,30.1,-31.4,41.0,-22.2,59.6],[24,-19.4,58.1,16.3,39.2,38.8,79.3,39.3,80.3,3.6,100.1,2.9,98.9],[18,-42.1,-85.0,-46.0,-92.1,-47.5,-92.7,-49.2,-91.7,-49.5,-90.7,-50.8,-89.8,-52.2,-90.2,-54.0,-89.1,-54.2,-88.1,-56.8,-86.6,-58.1,-87.1,-59.6,-86.2,-60.0,-84.5,-56.2,-77.5,-53.5,-78.9,-47.4,-67.0,-49.5,-65.8,-45.2,-57.5,-31.3,-65.0,-35.7,-73.2,-38.1,-71.9,-44.5,-83.8],[21,-39.8,-86.1,-42.1,-85.0,-46.0,-92.1,-45.9,-93.6,-44.1,-94.7,-42.6,-94.1,-39.8,-95.6,-39.6,-96.8,-37.8,-97.7,-36.4,-97.2,-34.9,-98.1,-34.6,-99.4,-32.8,-100.3,-31.2,-99.9,-29.5,-96.3,-26.8,-90.7,-28.9,-89.4,-24.5,-79.0,-22.0,-80.3,-21.5,-79.2,-17.6,-71.8,-31.3,-65.0,-35.7,-73.2,-33.4,-74.4],[24,-6.0,-99.8,-7.1,-99.2,-10.7,-105.8,-10.4,-107.3,-8.6,-108.1,-7.2,-107.6,-2.5,-110.0,-0.4,-106.0,-0.5,-104.0,4.4,-106.5,2.6,-107.6,0.5,-111.7,5.3,-114.3,5.4,-115.6,6.9,-116.5,8.5,-115.6,11.9,-109.2,10.7,-108.6,12.1,-106.0,11.0,-105.3,13.8,-99.9,15.0,-100.5,15.8,-99.0,16.9,-99.7,21.2,-91.7,2.1,-81.5,-2.2,-89.6,-0.9,-90.3,-1.7,-91.8,-0.4,-92.5,-3.3,-97.8,-4.7,-97.2],[15,38.9,-137.0,52.0,-144.3,55.0,-138.8,53.5,-138.0,55.9,-133.7,57.6,-134.6,59.6,-131.2,67.8,-116.7,68.3,-115.8,65.5,-114.2,65.1,-114.9,59.5,-111.7,58.7,-113.1,55.8,-111.6,55.4,-111.3,53.9,-110.5,47.3,-122.2,52.7,-125.2,50.7,-128.8,45.3,-125.8,40.6,-134.1],[15,-29.5,-96.3,-28.9,-96.7,-28.9,-97.9,-26.8,-99.0,-25.7,-98.4,-14.8,-104.2,-14.8,-105.5,-12.7,-106.6,-10.7,-105.8,-7.1,-99.2,-9.6,-97.8,-5.2,-90.1,-4.1,-90.6,-3.2,-89.0,-2.2,-89.6,2.1,-81.5,-17.6,-71.8,-21.5,-79.2,-20.3,-79.8,-21.4,-81.7,-19.8,-82.6,-23.8,-90.2,-26.0,-89.0,-26.8,-90.7],[15,-87.5,-70.1,-62.2,-83.6,-56.2,-72.5,-67.4,-66.5,-68.1,-67.7,-71.4,-65.9,-67.6,-58.8,-62.8,-61.3,-63.4,-62.3,-54.9,-66.9,-54.4,-65.9,-50.6,-68.0,-49.5,-65.8,-45.2,-57.5,-65.2,-46.8,-65.7,-47.8,-72.9,-43.8],[21,52.0,-144.3,75.3,-167.7,81.1,-174.4,103.8,-153.8,103.8,-148.5,92.9,-137.6,91.0,-135.7,88.9,-133.9,70.9,-119.3,67.6,-126.3,64.3,-133.0,59.6,-131.2,57.6,-134.6,55.0,-138.8],[26,-203.8,-155.0,-219.4,-146.6,-202.6,-115.6,-192.7,-97.5,-185.6,-84.3,-179.9,-87.3,-169.7,-92.9,-185.3,-121.6,-184.4,-122.1,-165.6,-132.2,-157.3,-116.8,-140.6,-125.8,-170.1,-180.1,-186.9,-171.0,-179.2,-156.8,-190.2,-151.0,-199.0,-146.2],[14.4,164.6,187.0,176.8,188.2,176.2,195.8,176.4,204.4,177.0,214.2,178.4,221.5,180.6,232.7,182.8,240.1,169.2,245.0,160.6,237.1,162.8,234.6,138.7,213.9],[12,-293.2,119.9,-296.1,119.0,-297.9,120.2,-297.9,121.1,-302.8,124.0,-310.2,127.6,-311.9,133.7,-308.5,139.8,-302.2,141.7,-301.7,143.1,-296.8,145.0,-292.0,142.7,-289.3,147.8,-280.0,142.9,-291.0,121.5],[24,-225.1,152.6,-197.8,136.9,-177.0,174.8,-183.4,178.5,-184.8,174.1,-207.0,184.8],[18,-290.7,118.0,-275.1,109.4,-262.1,133.4,-277.9,141.7],[12,-252.5,165.8,-241.1,170.8,-225.9,178.5,-224.5,175.7,-224.2,171.6,-225.8,166.0,-228.4,161.0,-231.9,158.6,-236.5,157.1,-241.8,157.4,-246.0,158.8,-249.6,161.1],[26,-187.2,88.2,-175.9,109.5,-179.2,111.9,-159.6,148.0,-69.1,100.9,-85.2,70.2,-90.5,72.0,-94.6,66.6,-160.8,104.1,-173.9,81.2],[24,-60.2,-167.6,-50.1,-148.6,-69.1,-138.7,-69.5,-139.5,-73.3,-146.5,-77.8,-154.4,-81.5,-161.2,-81.7,-162.3,-68.9,-168.9],[18,-94.7,-154.2,-81.5,-161.2,-77.8,-154.4,-79.7,-153.4,-75.4,-145.4,-73.3,-146.5,-69.5,-139.5,-82.5,-132.6,-86.2,-139.4,-83.5,-140.8,-87.9,-148.9,-91.0,-147.2],[24,-139.6,-129.7,-120.8,-139.8,-116.3,-131.5,-119.0,-130.0,-115.5,-123.7,-112.8,-125.2,-109.1,-118.4,-127.7,-108.4,-131.4,-115.2,-129.3,-116.3,-132.9,-122.8,-135.2,-121.6],[15,-118.7,-142.0,-109.7,-146.9,-102.4,-133.3,-98.7,-135.3,-106.0,-148.8,-96.6,-153.8,-88.5,-138.7,-86.4,-139.8,-86.2,-139.4,-82.5,-132.6,-109.1,-118.4,-112.8,-125.2,-110.3,-126.5],[21,32.4,-168.2,39.0,-156.1,45.2,-159.5,38.7,-171.6],[21,44.7,-174.8,38.7,-171.6,45.2,-159.5,51.2,-162.7],[24,40.1,-102.1,26.5,-126.2,40.6,-134.1,45.3,-125.8,47.3,-122.2,53.9,-110.5,47.5,-106.9,39.2,-121.5,36.2,-119.9,44.8,-104.7,42.8,-103.6],[18,31.8,-97.6,40.1,-102.1,26.5,-126.2,7.8,-117.0,8.5,-115.6,11.9,-109.2,16.9,-99.7,21.2,-91.7,28.4,-95.4,19.8,-111.7,23.4,-113.6],[21,-170.4,-57.2,-157.3,-64.3,-145.7,-70.6,-117.8,-85.7,-97.3,-48.4,-112.7,-40.0,-122.9,-58.6,-127.9,-55.8,-144.2,-47.0,-143.6,-45.9,-134.0,-28.5,-149.9,-19.9],[50.0,262.3,-250.7,256.6,-244.6,256.9,-244.2,255.6,-242.8,254.9,-243.4,251.2,-239.5,252.9,-237.9,250.8,-235.7,269.8,-218.3,275.0,-223.9,293.2,-207.2,299.1,-213.5,298.1,-214.3,303.1,-219.7,301.5,-221.1,303.3,-223.1,283.2,-241.5,278.2,-236.1],[21,241.5,-246.6,243.2,-249.1,251.6,-249.6,253.4,-251.5,256.3,-254.7,258.5,-252.7,262.8,-253.0,249.9,-240.2],[15,183.6,-183.2,208.6,-161.4,225.4,-180.6,201.3,-202.8],[15,169.9,-139.0,179.5,-130.2,207.7,-160.7,198.1,-169.5],[18,236.2,-241.6,237.1,-240.9,238.4,-241.1,240.8,-239.3,240.6,-238.5,243.1,-235.8,244.4,-236.0,246.3,-234.4,246.4,-233.2,248.0,-231.4,249.6,-231.4,251.5,-229.6,251.6,-228.5,256.5,-223.8,258.1,-223.9,260.0,-222.5,259.9,-221.1,260.6,-220.2,255.2,-213.9,230.9,-236.3,231.9,-237.1,231.2,-238.8,233.2,-240.9,234.9,-240.5],[8.9,144.4,-250.2,169.2,-227.8,113.0,-165.2,88.1,-187.8],[9.1,168.4,-276.6,173.0,-272.5,175.2,-274.7,178.0,-272.3,181.0,-275.6,198.9,-259.7,169.2,-227.8,144.4,-250.2],[18,35.4,-198.7,28.6,-191.3,27.1,-192.6,24.2,-189.4,9.4,-202.9,7.8,-201.2,-1.2,-209.4,-2.1,-208.5,-3.2,-209.5,-5.6,-206.9,-8.2,-209.3,-7.5,-214.4,-3.8,-218.4,-4.7,-219.3,3.0,-227.7,10.6,-220.9,14.7,-225.3,23.0,-217.7,19.1,-213.4],[60.0,83.7,-40.2,83.1,-41.6,83.5,-41.8,83.1,-42.5,82.7,-42.3,58.7,-30.1,55.9,-28.7,60.6,-20.5,60.9,-20.1,61.7,-20.5,61.5,-20.9,63.1,-21.8,67.5,-13.8,83.8,-22.6,85.2,-20.2,84.7,-19.9,85.3,-19.0,85.7,-19.3,127.3,-42.4,123.3,-49.3,123.0,-49.7,122.3,-49.2,122.5,-48.9,120.4,-47.8,116.0,-56.1],[21.6,72.9,236.6,76.2,231.8,93.1,242.6,90.2,246.6,102.3,255.6,116.2,268.2,135.0,289.8,118.0,304.1,105.0,289.7,103.4,290.6,101.5,291.8,103.4,294.4,103.4,295.9,103.2,297.0,102.0,298.3,100.3,299.5,94.4,301.9,89.5,302.0,84.5,301.6,79.6,300.0,75.3,297.9,71.3,295.4,66.9,291.7,63.5,287.8,64.3,286.6,62.5,284.7,60.9,283.0,56.5,277.3,53.7,273.3,50.9,269.2,48.9,266.3,47.8,264.1,47.6,262.3,48.0,260.7,48.7,259.2,50.1,258.0,52.0,257.1,54.0,256.6,56.1,256.6,58.2,257.0,60.2,257.7,62.6,258.9,63.4,257.7,64.9,255.4,63.3,254.5,61.7,253.0],[3.6,-41.5,50.4,-38.9,56.0,-36.5,61.3,-65.3,76.7,-70.1,66.7],[39.6,184.0,-129.4,225.6,-173.3,244.1,-156.6,246.0,-154.8,224.5,-135.4,204.6,-111.3],[12,-109.6,-248.0,-111.3,-239.7,-107.9,-239.0,-109.8,-230.0,-104.2,-228.9,-102.8,-235.3,-100.0,-234.7,-103.4,-218.3,-91.1,-215.8,-87.6,-232.4,-86.8,-232.2,-84.6,-242.9],[12,-59.3,-237.7,-61.1,-229.0,-57.8,-228.3,-59.7,-218.9,-53.4,-217.6,-52.0,-224.2,-50.3,-223.9,-53.6,-208.2,-40.5,-205.5,-37.0,-222.1,-36.1,-221.9,-33.9,-232.5],[12,-249.3,-182.1,-241.5,-178.7,-239.9,-182.2,-237.1,-181.0,-238.9,-176.8,-231.0,-173.4,-222.8,-192.4,-227.7,-194.5,-228.2,-193.5,-233.3,-195.7,-232.7,-197.0,-241.2,-200.7],[21,-249.3,-182.1,-256.5,-166.7,-247.1,-162.4,-246.2,-164.3,-236.9,-160.1,-231.0,-173.4,-238.9,-176.8,-240.7,-172.8,-243.4,-174.1,-241.5,-178.7],[18,-247.1,-162.4,-249.3,-157.6,-258.5,-161.7,-262.6,-152.8,-244.1,-144.4,-236.9,-160.1,-246.2,-164.3],[24,-241.2,-200.7,-230.0,-224.8,-211.0,-218.9,-210.5,-218.7,-210.2,-218.4,-209.9,-218.1,-209.8,-217.6,-209.8,-217.2,-209.8,-216.8,-210.0,-216.5,-210.9,-215.8,-212.0,-215.7,-213.6,-212.3,-213.3,-211.9,-213.0,-211.6,-212.9,-211.2,-212.9,-210.6,-213.1,-210.0,-213.9,-209.4,-215.1,-209.2,-215.4,-208.4,-220.5,-210.5,-220.5,-212.2,-223.0,-213.2,-224.2,-212.3,-226.2,-213.1,-226.3,-214.2,-228.5,-213.0,-228.1,-211.8,-228.4,-210.6,-229.2,-209.4,-230.4,-208.7,-231.1,-207.1,-230.1,-206.7,-229.6,-207.0,-227.2,-206.1,-227.1,-205.0,-225.8,-204.4,-223.7,-205.4,-218.1,-202.7,-218.4,-202.2,-218.0,-201.7,-217.7,-201.2,-217.6,-200.4,-217.8,-199.8,-218.2,-199.2,-218.8,-198.9,-219.4,-198.7,-220.1,-198.8,-221.6,-195.7,-221.1,-195.4,-220.8,-194.9,-220.6,-194.3,-220.7,-193.7,-221.0,-193.2,-221.4,-192.7,-221.9,-192.5,-222.8,-192.4,-223.1,-192.6,-227.7,-194.5,-232.7,-197.0],[122.4,230.9,-236.3,201.3,-202.8,225.4,-180.6,255.2,-213.9],[24,60.3,229.7,63.8,232.8,65.8,234.5,85.6,212.6,84.9,212.0,83.7,210.9,80.1,207.7]],"r":[[8,0,-246.8,-35.2,-238.2,-39.7,-217.2,-50.4,-186.0,-67.1],[5,0,143.5,-159.8,149.7,-154.4,179.5,-128.3,181.7,-126.3,204.2,-106.1,207.7,-102.9,209.6,-101.4],[8,0,46.2,8.2,88.6,-12.9],[5,0,231.3,-250.5,234.4,-247.6,263.9,-220.4,286.5,-198.5,293.1,-193.8],[5,0,179.5,-128.3,186.4,-136.3,232.7,-186.6,242.0,-196.7,255.0,-210.8,263.9,-220.4],[5,0,64.9,79.1,63.1,75.4,52.4,72.1,45.0,58.0,40.8,60.2,34.2,52.8],[5,0,-281.9,-119.7,-277.9,-127.5,-258.3,-170.9,-256.9,-174.1,-232.6,-227.8,-222.8,-274.1,-218.3,-295.7,-213.8,-316.9,-208.1,-343.8,-182.9,-338.1,-174.4,-336.2],[5,0,-316.3,29.0,-309.2,32.5,-259.0,57.5,-252.0,61.0],[5,0,139.0,96.0,123.0,67.7,114.0,49.4,110.7,42.6,110.5,39.7,111.3,37.2,111.2,34.4,106.4,24.5,105.5,21.5,105.9,18.7,105.6,16.5,88.6,-12.9],[5,0,-174.8,160.4,-169.4,157.9,-161.1,153.9,-153.6,152.0,-147.1,149.2,-141.3,145.6,-136.4,141.5,-131.6,137.8,-126.4,134.8,-120.1,133.0,-114.0,130.9,-109.0,128.4,-104.5,125.1,-99.6,121.8,-94.9,118.4,-89.7,115.4,-83.5,112.7,-77.2,111.4,-67.2,109.3,-60.7,106.8],[5,0,-277.2,-247.1,-277.3,-244.7,-276.6,-242.7,-275.4,-239.3,-263.8,-233.9,-234.2,-228.1,-232.6,-227.8,-206.6,-221.5,-197.4,-219.4],[8,0,117.7,-151.1,109.8,-158.3,82.4,-183.2,59.9,-203.2,55.1,-207.5,50.0,-212.2,33.5,-227.7,30.1,-229.9,26.2,-231.4,21.2,-232.6,-6.4,-237.6,-148.6,-267.3,-179.2,-273.9,-186.4,-275.4],[8,0,182.0,-355.8,178.3,-348.2,176.5,-344.5,174.5,-340.4,168.9,-331.5,154.1,-316.0,142.8,-304.3,138.8,-300.1,114.0,-274.2,66.7,-220.4,60.3,-213.4,55.1,-207.5,50.5,-202.2,41.7,-191.8,35.3,-185.4,28.1,-180.1,22.4,-176.9,19.9,-175.4,-38.9,-143.6,-46.5,-139.3,-113.4,-103.3],[5,0,-204.5,-171.0,-204.1,-167.1,-202.8,-164.5,-199.9,-162.1,-195.9,-162.0,-193.2,-163.7,-191.7,-166.6,-191.5,-170.6],[8,0,272.1,202.2,276.1,207.4,276.5,208.0,278.4,210.4,305.0,246.5,308.6,251.3,320.3,267.1,322.7,270.3,335.9,289.4,337.9,292.2,344.0,300.3],[8,0,-113.4,-103.3,-109.6,-96.1,-109.1,-95.2,-96.0,-69.6,-80.4,-40.4,-76.5,-32.8],[5,0,-38.9,-143.6,-42.2,-149.2,-58.1,-176.7,-59.1,-178.3,-137.8,-134.3],[5,0,-162.4,-221.4,-35.3,-194.5],[5,0,-217.2,-176.2,-211.6,-173.8,-204.5,-171.0,-200.8,-170.4,-195.5,-170.0,-191.5,-170.6,-186.1,-174.1,-171.3,-184.2,-167.3,-186.9],[8,0,-239.8,179.2,-241.6,182.6,-243.7,186.4,-244.9,205.5,-246.1,223.6,-248.1,255.8,-251.5,308.5,-254.1,333.4,-258.4,381.7],[16,1,126.8,-141.7,133.0,-148.4,143.5,-159.8,146.9,-163.6],[5,0,30.1,-229.9,34.6,-234.9,58.4,-261.9,77.9,-283.8,80.9,-287.2],[8,0,-165.2,185.4,-173.1,188.6,-192.0,196.3,-197.5,196.9,-203.4,195.1,-239.8,179.2],[8,0,-218.0,41.3,-220.8,33.5,-221.6,31.1,-246.8,-35.2,-254.8,-56.5],[8,0,301.9,333.9,296.4,326.0,281.7,305.8,269.4,288.9,268.0,287.1,237.9,246.0,235.7,243.0,235.2,242.2,231.4,237.1],[12,0,-375.8,68.8,-367.2,64.3,-357.4,59.1,-334.4,46.9,-322.7,38.2,-316.3,29.0,-297.5,-9.9,-274.3,-57.8,-273.1,-60.4,-270.5,-65.7,-269.9,-66.9,-265.4,-75.9,-259.6,-89.0,-258.2,-91.7,-217.2,-176.2,-200.9,-211.3,-197.4,-219.4,-193.2,-236.5,-187.4,-269.2,-186.4,-275.4,-174.4,-336.2,-174.1,-337.6,-173.5,-340.6,-166.6,-374.6,-159.2,-411.0,-158.2,-415.7,-157.1,-420.9],[8,0,-290.5,-246.5,-278.3,-246.6,-277.2,-247.1,-272.9,-249.4,-271.0,-254.2,-259.6,-312.3,-250.1,-360.5,-248.4,-369.0,-249.9,-371.8,-251.4,-374.6,-257.6,-381.4],[5,0,-75.8,-181.5,-102.7,-186.7,-127.0,-191.4,-156.8,-197.2,-167.3,-186.9],[5,0,-127.0,-191.4,-159.4,-174.2],[5,0,-102.7,-186.7,-151.4,-160.6],[5,0,-35.3,-194.5,-30.1,-195.3,-26.3,-195.9,-20.3,-197.1,-16.4,-198.4,-13.8,-201.1,-7.4,-232.4,-6.4,-237.6],[5,0,82.4,-183.2,86.2,-187.4,157.5,-267.9,168.6,-280.5,147.1,-300.3,142.8,-304.3],[5,0,-186.0,-67.1,-166.0,-31.3],[16,1,234.9,-273.9,165.7,-199.0,143.4,-178.3],[6,0,277.7,4.3,285.0,-3.9,286.7,-5.7,288.1,-7.1,292.6,-2.7,291.0,-0.9,287.2,3.2,282.3,8.5,277.7,4.3],[5,0,-96.0,-69.6,-90.3,-72.5,-22.7,-108.8,22.3,-135.1,55.8,-157.8,78.3,-179.3,82.4,-183.2],[5,0,63.1,75.4,87.6,62.9,114.0,49.4],[5,0,72.2,94.3,97.6,81.0,123.0,67.7],[5,0,157.1,300.0,150.3,292.0,147.4,288.6,138.7,279.0,77.2,224.7,115.9,180.4,139.8,148.7],[5,0,283.0,15.8,288.6,13.7,295.8,11.0],[5,0,288.6,13.7,275.1,13.1,271.5,14.0,265.8,17.0,248.0,31.0,231.4,45.6],[16,1,-368.5,144.7,-344.0,131.6,-295.2,106.0,-272.6,94.1,-226.9,70.7,-222.9,68.7,-210.5,61.8],[5,0,-90.6,186.4,-92.4,193.7,-98.3,197.4,-148.9,205.7,-152.1,206.3,-158.1,207.2],[5,0,-307.9,274.2,-289.9,271.0,-258.8,256.6,-253.6,255.6,-248.1,255.8],[5,0,-150.8,255.7,-157.6,255.4,-187.3,254.1,-214.1,278.4,-215.4,299.3,-220.5,309.6,-247.3,308.6,-251.5,308.5],[8,0,-218.0,41.3,-215.2,49.4,-213.9,53.4,-210.5,61.8],[5,0,-127.7,326.7,-120.5,326.1,-115.3,325.1,-108.6,323.3,-102.0,321.0,-95.9,318.5,-90.8,315.6,-85.1,311.0,-71.2,297.8,-54.9,282.6,-49.6,278.1,-44.3,274.0,-37.8,270.1,-24.0,263.6,-18.2,260.4,-10.3,255.9,-3.7,251.5,1.6,247.5,72.1,173.5,74.8,170.2,76.9,166.2,80.6,156.7,82.9,152.9,90.2,146.2,96.2,140.8,108.0,129.9,139.0,96.0],[16,0,21.9,412.3,32.5,403.6,35.8,401.0,60.5,380.7,68.7,374.1,98.5,349.2,106.9,342.1,140.9,313.7,149.9,306.1,157.1,300.0,185.0,276.8,187.0,275.1,191.5,271.4,195.5,267.9,231.4,237.1,235.8,233.4,243.9,226.4,244.8,225.6,268.3,205.5,272.1,202.2,305.5,173.6,314.5,165.9,325.1,156.1,348.3,132.1,380.6,96.9,385.5,91.9],[6,0,175.8,264.5,170.1,260.7,122.9,216.4,133.7,205.3,121.0,193.7,131.2,183.1,122.7,174.4],[16,1,87.6,-104.4,98.8,-113.4,118.0,-132.8,120.7,-135.4,126.8,-141.7],[8,0,135.7,-135.3,137.6,-133.3,157.5,-114.2,186.4,-88.3,192.4,-82.7,198.0,-77.5],[6,0,-153.5,-84.6,-123.6,-98.1,-113.4,-103.3],[6,0,-153.5,-84.6,-179.3,-70.4,-186.0,-67.1],[16,1,143.4,-178.3,126.7,-160.7,124.0,-157.7,117.7,-151.1],[16,1,146.9,-163.6,166.0,-188.9,239.1,-270.2],[16,1,117.7,-151.1,112.0,-145.5,99.7,-133.5,83.8,-119.7,70.7,-111.2,54.1,-101.5,48.3,-98.1,7.5,-76.1,-21.1,-60.8,-56.2,-43.0,-76.5,-32.8,-85.9,-29.2,-114.4,-14.7,-147.9,2.3,-172.2,15.0,-193.0,26.9],[5,0,283.0,15.8,271.0,19.9,253.9,33.3,246.4,39.5,242.5,42.8,229.5,53.7,214.9,65.3,177.2,106.9,139.8,148.7],[8,0,385.5,91.9,378.2,85.3,375.7,83.0,332.3,43.9,316.3,29.5,305.6,19.8,295.8,11.0,292.6,8.1,287.2,3.2],[5,0,-90.6,186.4,-106.0,148.9,-114.0,130.9],[5,0,136.0,216.6,178.4,255.0,179.3,256.2,181.9,259.2,184.2,262.5,184.5,262.8,186.5,265.2,191.5,271.4],[16,1,-210.5,61.8,-199.3,55.5,-131.8,18.0,-109.7,5.9,-74.0,-13.9,-70.5,-15.8,-68.3,-16.8,-31.7,-37.0,41.9,-76.7,62.5,-87.7,69.1,-91.2,85.7,-102.9,87.6,-104.4],[8,0,-188.8,122.6,-174.8,160.4,-172.6,166.1,-172.2,167.1,-165.2,185.4,-159.2,202.3,-158.1,207.2,-156.4,214.5,-155.5,218.5,-153.4,232.1,-152.5,245.0,-151.9,248.6,-150.8,255.7,-148.8,264.7,-147.3,269.2,-140.1,291.3,-135.6,304.9,-131.5,316.3,-127.7,326.7],[16,1,-218.0,41.3,-230.9,48.8,-252.0,61.0],[5,0,192.2,37.1,179.3,15.7,160.3,8.0,134.2,-13.2,129.8,-19.4,127.2,-27.3,125.0,-34.1],[5,0,139.0,96.0,187.4,43.0,192.2,37.1,206.3,19.3,225.4,-4.8,229.4,-8.5,236.2,-14.1,242.9,-18.8,248.7,-23.7,252.0,-27.8],[8,0,125.0,-34.1,161.2,-53.4,166.2,-56.2,171.4,-59.6,175.3,-63.6,187.6,-77.1,192.4,-82.7,199.7,-90.6,204.1,-95.4,209.6,-101.4,291.3,-191.8,293.1,-193.8,315.7,-217.9,317.4,-219.8,323.2,-226.3],[5,0,22.4,-176.9,18.3,-181.5,0.6,-201.4],[5,0,206.3,19.3,193.9,8.5],[8,0,-210.5,61.8,-207.1,70.8,-205.0,76.6,-188.8,122.6],[8,0,88.6,-12.9,120.8,-31.7,125.0,-34.1],[8,0,-270.5,-65.7,-263.0,-62.0,-260.4,-60.7,-254.8,-56.5],[8,0,-254.8,-56.5,-257.1,-67.3,-258.4,-71.5,-265.4,-75.9],[16,1,-252.0,61.0,-303.0,87.1],[5,0,-246.1,223.6,-251.1,228.0,-254.0,230.4,-256.3,236.3,-256.6,243.5,-254.6,248.1,-252.7,250.3,-248.1,255.8],[5,0,77.2,224.7,62.1,240.4,25.2,281.9,14.3,296.8,-8.6,345.1],[5,0,-34.1,-131.3,-23.0,-109.4,-22.7,-108.8],[5,0,-59.1,-178.3,-65.2,-179.6,-75.8,-181.5],[5,0,-143.3,-146.1,-75.8,-181.5],[8,0,117.7,-151.1,126.8,-141.7,135.7,-135.3],[8,0,198.0,-77.5,220.0,-57.2,245.0,-34.0,248.3,-31.0,252.0,-27.8],[5,0,-167.3,-186.9,-159.4,-174.2,-151.4,-160.6,-144.4,-148.2,-143.3,-146.1],[16,0,292.4,-254.0,285.9,-259.9],[16,1,-193.0,26.9,-202.8,32.6,-206.1,34.5,-218.0,41.3],[5,0,96.2,140.8,89.6,127.9,72.2,94.3,64.9,79.1],[6,0,274.6,-39.3,267.8,-31.7,267.3,-31.8,266.8,-32.0,266.5,-32.0,265.9,-32.0,265.4,-31.9,264.9,-31.7,264.4,-31.4,263.9,-31.1,261.6,-28.5,267.7,-23.0,268.8,-24.3,269.8,-25.3,270.3,-26.1,270.6,-26.8,270.7,-27.6,270.7,-28.3,270.5,-28.8,270.1,-29.4,277.1,-37.3,276.0,-38.1,275.8,-38.3,274.6,-39.3]]};
+
+</script>
+  <script>
+/* Hero: real Boston (top) mirrored by its digital twin (bottom).
+   Buildings and streets: OpenStreetMap; aerial photo: USGS (public domain). Huntington Ave / Northeastern area.
+   City data comes from city.js; build-stage.sh inlines both files into the published page. */
+(() => {
+  const CITY = window.TWINET_CITY;
+  const panel = document.getElementById("twinPanel");
+  const host = document.getElementById("twin");
+  const overlay = document.getElementById("flow");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const hasGL = (() => { try { const c = document.createElement("canvas"); return !!(c.getContext("webgl") || c.getContext("experimental-webgl")); } catch (e) { return false; } })();
+  if (!window.THREE || !hasGL) { panel.classList.add("no-webgl"); return; }
+
+  const T = THREE;
+  let seed = 9;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+
+  /* ---------- accent theme: follows the page's logo choice (green or cyan) ---------- */
+  const THEMES = {
+    green: { acc: 0x3cf26a, soft: 0x8dffc2, core: 0xc9ffd6, fill: 0x0b2c18, grid: 0x1e6a3a, css: "#3cf26a", rgb: "60,242,106", hi: "120,255,150" },
+    cyan: { acc: 0x38c6ff, soft: 0x9be6ff, core: 0xc9f1ff, fill: 0x08263a, grid: 0x1b5674, css: "#38c6ff", rgb: "56,198,255", hi: "150,225,255" },
+  };
+  let TH = THEMES.green;
+  const themed = { acc: [], soft: [], fill: [], grid: [] };       // materials recoloured on theme change
+  const tm = (role, mat) => (themed[role].push(mat), mat);
+
+  /* ---------- renderer, scenes, cameras ---------- */
+  const renderer = new T.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  host.appendChild(renderer.domElement);
+
+  const real = new T.Scene(), twin = new T.Scene();
+  real.fog = new T.Fog(0x2a3438, 650, 1500);
+  const hemi = new T.HemisphereLight(0x8fb0c4, 0x1c1b18, .42);
+  const amb = new T.AmbientLight(0x2c343a, .3);
+  real.add(hemi);
+  const sun = new T.DirectionalLight(0xffbf85, 1.05);
+  sun.position.set(-520, 260, 330);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -520, right: 520, top: 520, bottom: -520, near: 50, far: 1600 });
+  sun.shadow.bias = -.0006;
+  real.add(sun, amb);
+
+  const cam = new T.PerspectiveCamera(30, 2, 10, 5000);
+  const target = new T.Vector3(-25, 0, -10);
+
+  /* ---------- shared helpers ---------- */
+  function ribbonGeo(list) {               // list of [flatPts, width, y]
+    const P = [], I = [];
+    list.forEach(([pts, w, y]) => {
+      for (let i = 0; i + 3 < pts.length; i += 2) {
+        const x1 = pts[i], z1 = pts[i + 1], x2 = pts[i + 2], z2 = pts[i + 3];
+        const L = Math.hypot(x2 - x1, z2 - z1) || 1, nx = -(z2 - z1) / L * w / 2, nz = (x2 - x1) / L * w / 2;
+        const b = P.length / 3;
+        P.push(x1 + nx, y, z1 + nz, x1 - nx, y, z1 - nz, x2 + nx, y, z2 + nz, x2 - nx, y, z2 - nz);
+        I.push(b, b + 1, b + 2, b + 1, b + 3, b + 2);
+      }
+    });
+    const g = new T.BufferGeometry();
+    g.setAttribute("position", new T.Float32BufferAttribute(P, 3));
+    g.setIndex(I);
+    g.computeVertexNormals();
+    return g;
+  }
+  function mkPath(flat) {
+    const p = [];
+    for (let i = 0; i < flat.length; i += 2) p.push([flat[i], flat[i + 1]]);
+    const L = [0];
+    for (let i = 1; i < p.length; i++) L.push(L[i - 1] + Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]));
+    return { p, L, len: L[L.length - 1] };
+  }
+  // position along a polyline, ping-ponging at the ends; lat = lateral offset (drives on the right)
+  function along(path, s, lat) {
+    const n = 2 * path.len;
+    s = ((s % n) + n) % n;
+    let sg = 1;
+    if (s > path.len) { s = n - s; sg = -1; }
+    let i = 1;
+    while (i < path.L.length - 1 && path.L[i] < s) i++;
+    const a = path.p[i - 1], b = path.p[i], seg = (path.L[i] - path.L[i - 1]) || 1, f = clamp((s - path.L[i - 1]) / seg);
+    const dx = (b[0] - a[0]) / seg, dz = (b[1] - a[1]) / seg;
+    return { x: a[0] + (b[0] - a[0]) * f - dz * lat * sg, z: a[1] + (b[1] - a[1]) * f + dx * lat * sg, ang: Math.atan2(dz * sg, dx * sg) };
+  }
+  // keep the longest run of a polyline that stays inside the view box
+  function clip(flat, lim) {
+    let best = [], cur = [];
+    for (let i = 0; i < flat.length; i += 2) {
+      if (Math.abs(flat[i]) < lim && Math.abs(flat[i + 1]) < lim) cur.push(flat[i], flat[i + 1]);
+      else { if (cur.length > best.length) best = cur; cur = []; }
+    }
+    return cur.length > best.length ? cur : best;
+  }
+
+  /* ---------- two looks for the real world: aerial photo (default) or fully rendered ---------- */
+  const LOOK = { photo: new T.Group(), render: new T.Group() };
+  real.add(LOOK.photo, LOOK.render);
+  const PHOTO = 900;                                   // aerial photo covers ±450 m around the origin
+
+  // USGS aerial orthophoto (public domain) draped on the ground and on every roof
+  const loader = new T.TextureLoader();
+  const aerial = loader.load("assets/huntington-aerial.webp", t => { roofPhoto.image = t.image; roofPhoto.needsUpdate = true; });
+  aerial.encoding = T.sRGBEncoding; aerial.anisotropy = 8;
+  const roofPhoto = new T.Texture();
+  roofPhoto.encoding = T.sRGBEncoding; roofPhoto.anisotropy = 8;
+  roofPhoto.repeat.set(1 / PHOTO, 1 / PHOTO); roofPhoto.offset.set(.5, .5);   // roof UVs are world metres
+  const photoGround = new T.Mesh(new T.PlaneGeometry(PHOTO, PHOTO).rotateX(-Math.PI / 2), new T.MeshStandardMaterial({ map: aerial, roughness: 1 }));
+  photoGround.receiveShadow = true;
+  const outerGround = new T.Mesh(new T.PlaneGeometry(4000, 4000).rotateX(-Math.PI / 2), new T.MeshStandardMaterial({ color: 0x5b6157, roughness: 1 }));
+  outerGround.position.y = -.2;
+  LOOK.photo.add(photoGround, outerGround);
+  const roofPhotoMat = new T.MeshStandardMaterial({ map: roofPhoto, roughness: .95 });
+
+  /* ---------- ground & streets (rendered look) ---------- */
+  const groundTex = (() => {
+    const c = document.createElement("canvas"); c.width = c.height = 256;
+    const g = c.getContext("2d");
+    g.fillStyle = "#3a3d3b"; g.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 2600; i++) { const v = 48 + rnd() * 26 | 0; g.fillStyle = `rgb(${v},${v + 2},${v})`; g.fillRect(rnd() * 256, rnd() * 256, 2, 2); }
+    for (let i = 0; i < 14; i++) {        // lawns and courtyards
+      g.fillStyle = `rgba(${52 + rnd() * 14 | 0},${78 + rnd() * 20 | 0},${50 + rnd() * 10 | 0},.85)`;
+      g.fillRect(rnd() * 256, rnd() * 256, 18 + rnd() * 40, 14 + rnd() * 34);
+    }
+    const t = new T.CanvasTexture(c);
+    t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(9, 9); t.encoding = T.sRGBEncoding;
+    return t;
+  })();
+  const groundMesh = new T.Mesh(new T.PlaneGeometry(3000, 3000).rotateX(-Math.PI / 2),
+    new T.MeshStandardMaterial({ color: 0xffffff, map: groundTex, roughness: 1 }));
+  groundMesh.receiveShadow = true;
+  LOOK.render.add(groundMesh);
+  const roads = CITY.r.map(r => ({ w: r[0], hunt: r[1], pts: r.slice(2) }));
+  [[ribbonGeo(roads.map(r => [r.pts, r.w + 6, .15])), 0x5a5c5b],                                  // sidewalks
+   [ribbonGeo(roads.map(r => [r.pts, r.w, .3])), 0x1f2225]].forEach(([geo, color]) => {            // asphalt
+    const m = new T.Mesh(geo, new T.MeshStandardMaterial({ color, roughness: .95, side: T.DoubleSide }));
+    m.receiveShadow = true; LOOK.render.add(m);
+  });
+  const dashes = [];
+  roads.filter(r => r.w >= 11).forEach(r => {
+    const path = mkPath(r.pts);
+    for (let s = 4; s < path.len - 4; s += 10) {
+      const a = along(path, s, 0), b = along(path, s + 4, 0);
+      dashes.push([[a.x, a.z, b.x, b.z], .5, .45]);
+    }
+  });
+  LOOK.render.add(new T.Mesh(ribbonGeo(dashes), new T.MeshBasicMaterial({ color: 0xd9c46a, side: T.DoubleSide })));
+
+  // street trees along the big roads
+  const treeSpots = [];
+  roads.filter(r => r.w >= 11).forEach(r => {
+    const path = mkPath(r.pts);
+    for (let s = 6; s < path.len; s += 24) [1, -1].forEach(sd => { const p = along(path, s, sd * (r.w / 2 + 4)); treeSpots.push(p); });
+  });
+  const trees = new T.InstancedMesh(new T.IcosahedronGeometry(1, 1), new T.MeshStandardMaterial({ color: 0x35553a, roughness: 1, flatShading: true }), treeSpots.length);
+  const m4 = new T.Matrix4();
+  treeSpots.forEach((p, i) => { const s = 3.2 + rnd() * 1.6; m4.compose(new T.Vector3(p.x, 5 + s * .4, p.z), new T.Quaternion(), new T.Vector3(s, s * 1.15, s)); trees.setMatrixAt(i, m4); });
+  trees.castShadow = true;
+  LOOK.render.add(trees);
+  const lamps = new T.InstancedMesh(new T.SphereGeometry(1.1, 8, 6), new T.MeshBasicMaterial({ color: 0xffd9a0 }), Math.ceil(treeSpots.length / 2));
+  treeSpots.filter((_, i) => i % 2).forEach((p, i) => { m4.makeTranslation(p.x + 3, 9, p.z + 3); lamps.setMatrixAt(i, m4); });
+  LOOK.render.add(lamps);
+
+  /* ---------- buildings (real: lit facades / twin: wireframe) ---------- */
+  function windowTex() {
+    const c = document.createElement("canvas"), e = document.createElement("canvas");
+    c.width = c.height = e.width = e.height = 128;
+    const g = c.getContext("2d"), ge = e.getContext("2d");
+    g.fillStyle = "#b9b6ae"; g.fillRect(0, 0, 128, 128);
+    ge.fillStyle = "#000"; ge.fillRect(0, 0, 128, 128);
+    for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) {
+      const x = k * 32 + 7, y = r * 32 + 9;
+      g.fillStyle = "#26323b"; g.fillRect(x, y, 18, 15);
+      const p = rnd();
+      if (p < .4) { ge.globalAlpha = .5 + rnd() * .5; ge.fillStyle = p < .32 ? "#ffcc80" : "#cfe1ff"; ge.fillRect(x, y, 18, 15); ge.globalAlpha = 1; }
+    }
+    return [c, e].map(cv => {
+      const t = new T.CanvasTexture(cv);
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(1 / 14, 1 / 14); t.encoding = T.sRGBEncoding; t.anisotropy = 4;
+      return t;
+    });
+  }
+  const texes = [windowTex(), windowTex(), windowTex()];
+  const palette = [0x9c5a44, 0x8a4c3c, 0xb9ad97, 0xa8a193, 0x75868f, 0x8f918d, 0xa46b52];
+  const roofMats = [0x3b3e41, 0x45423d, 0x34393b, 0x4d4a45].map(c => new T.MeshStandardMaterial({ color: c, roughness: .95 }));
+  const wallMats = {};
+  const wallMat = (ci, ti) => wallMats[ci + "_" + ti] || (wallMats[ci + "_" + ti] = new T.MeshStandardMaterial({
+    color: palette[ci], map: texes[ti][0], emissive: 0xffffff, emissiveMap: texes[ti][1], emissiveIntensity: .85, roughness: .85
+  }));
+  const dayPalette = [0x8e5a48, 0x7d5446, 0xa49d8e, 0x96928a, 0x6f7c83, 0x87898a, 0x946a58];
+  const dayWalls = dayPalette.map((c, i) => new T.MeshStandardMaterial({ color: c, map: texes[i % 3][0], roughness: .9 }));
+  const twinFill = tm("fill", new T.MeshBasicMaterial({ color: 0x0b2c18, transparent: true, opacity: .4, side: T.DoubleSide }));
+  const twinEdge = tm("acc", new T.LineBasicMaterial({ color: 0x3cf26a, transparent: true, opacity: .7 }));
+  const twinFloor = tm("acc", new T.LineBasicMaterial({ color: 0x3cf26a, transparent: true, opacity: .16 }));
+
+  const floorPts = [];
+  const blds = CITY.b.map(a => {
+    const h = a[0], pts = a.slice(1), shape = new T.Shape();
+    let cx = 0, cz = 0;
+    for (let i = 0; i < pts.length; i += 2) {
+      i ? shape.lineTo(pts[i], -pts[i + 1]) : shape.moveTo(pts[i], -pts[i + 1]);
+      cx += pts[i]; cz += pts[i + 1];
+    }
+    const geo = new T.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+    geo.rotateX(-Math.PI / 2);
+    const ci = Math.floor(rnd() * palette.length);
+    const bm = new T.Mesh(geo, [roofMats[Math.floor(rnd() * 4)], wallMat(ci, Math.floor(rnd() * 3))]);
+    const pm = new T.Mesh(geo, [roofPhotoMat, dayWalls[ci]]);
+    bm.castShadow = bm.receiveShadow = pm.castShadow = pm.receiveShadow = true;
+    LOOK.render.add(bm); LOOK.photo.add(pm);
+    twin.add(new T.Mesh(geo, twinFill));
+    twin.add(new T.LineSegments(new T.EdgesGeometry(geo, 25), twinEdge));
+    // faint floor lines so the twin reads as a 3D model, not a solid (merged below into one draw call)
+    for (let y = 14; y < h - 3; y += 14)
+      for (let i = 0; i < pts.length; i += 2) {
+        const j = (i + 2) % pts.length;
+        floorPts.push(pts[i], y, pts[i + 1], pts[j], y, pts[j + 1]);
+      }
+    const n = pts.length / 2;
+    return { h, x: cx / n, z: cz / n };
+  });
+
+  const floorGeo = new T.BufferGeometry();
+  floorGeo.setAttribute("position", new T.Float32BufferAttribute(floorPts, 3));
+  twin.add(new T.LineSegments(floorGeo, twinFloor));
+
+  /* ---------- twin ground: grid, street centerlines, radio map ---------- */
+  const gridPts = [];
+  for (let v = -1500; v <= 1500; v += 25) gridPts.push(v, 0, -1500, v, 0, 1500, -1500, 0, v, 1500, 0, v);
+  const gridGeo = new T.BufferGeometry();
+  gridGeo.setAttribute("position", new T.Float32BufferAttribute(gridPts, 3));
+  twin.add(new T.LineSegments(gridGeo, tm("grid", new T.LineBasicMaterial({ color: 0x1e6a3a, transparent: true, opacity: .5 }))));
+  const streetLines = [];
+  roads.forEach(r => { for (let i = 0; i + 3 < r.pts.length; i += 2) streetLines.push(new T.Vector3(r.pts[i], .4, r.pts[i + 1]), new T.Vector3(r.pts[i + 2], .4, r.pts[i + 3])); });
+  twin.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(streetLines), tm("acc", new T.LineBasicMaterial({ color: 0x3cf26a, transparent: true, opacity: .3 }))));
+
+  const MAP = 900, heatCv = document.createElement("canvas");
+  heatCv.width = heatCv.height = 256;
+  const hctx = heatCv.getContext("2d");
+  const heatTex = new T.CanvasTexture(heatCv);
+  const heat = new T.Mesh(new T.PlaneGeometry(MAP, MAP).rotateX(-Math.PI / 2),
+    new T.MeshBasicMaterial({ map: heatTex, transparent: true, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
+  heat.position.y = .8;
+  twin.add(heat);
+  const toMap = v => (v / MAP + .5) * 256;
+
+  /* ---------- cell sites: real antennas + virtual twins ---------- */
+  const sites = [];
+  [...blds].sort((a, b) => b.h - a.h).forEach(b => {
+    if (sites.length < 4 && b.h >= 18 && Math.abs(b.x - target.x) < 250 && Math.abs(b.z - target.z) < 230 &&
+        sites.every(s => Math.hypot(s.x - b.x, s.z - b.z) > 170)) sites.push({ ...b });
+  });
+  // soft additive halo so small lights stay visible against a bright aerial photo
+  const glowTex = (() => {
+    const c = document.createElement("canvas"); c.width = c.height = 64;
+    const g = c.getContext("2d"), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(.35, "rgba(255,255,255,.9)"); r.addColorStop(.65, "rgba(255,255,255,.3)"); r.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = r; g.fillRect(0, 0, 64, 64);
+    return new T.CanvasTexture(c);
+  })();
+  const glow = (color, size) => {
+    // normal blending (not additive) so the halo still reads on white roofs in daylight
+    const sp = new T.Sprite(new T.SpriteMaterial({ map: glowTex, color, transparent: true, depthWrite: false, depthTest: false }));
+    sp.renderOrder = 10;
+    sp.scale.set(size, size, 1);
+    return sp;
+  };
+  const mastMat = new T.MeshStandardMaterial({ color: 0x3b4146, roughness: .6 });
+  const panelMat = new T.MeshStandardMaterial({ color: 0xd9dee0, roughness: .45 });
+  sites.forEach((s, i) => {
+    s.name = "Cell " + "ABCD"[i];
+    const g = new T.Group();
+    const mast = new T.Mesh(new T.CylinderGeometry(.25, .3, 7, 8), mastMat);
+    mast.position.y = 3.5; g.add(mast);
+    for (let k = 0; k < 3; k++) {
+      const a = k * 2 * Math.PI / 3, p = new T.Mesh(new T.BoxGeometry(.45, 2.6, 1.1), panelMat);
+      p.position.set(Math.cos(a) * .9, 5, Math.sin(a) * .9); p.rotation.y = -a; g.add(p);
+    }
+    // aviation-style red beacon with a halo
+    const led = new T.Group();
+    const bulb = new T.Mesh(new T.SphereGeometry(.42, 12, 8), new T.MeshBasicMaterial({ color: 0xff2a1f }));
+    led.add(bulb, glow(0xff1a0a, 3.6));
+    led.position.y = 7.6; g.add(led);
+    g.scale.setScalar(4); g.position.set(s.x, s.h, s.z);
+    real.add(g);
+    s.real = g; s.led = led; s.top = new T.Vector3(s.x, s.h + 30, s.z);
+
+    const v = new T.Group();
+    const oct = new T.Mesh(new T.OctahedronGeometry(7, 0), tm("acc", new T.MeshBasicMaterial({ color: 0x3cf26a, wireframe: true })));
+    const core = new T.Mesh(new T.SphereGeometry(2.4, 12, 8), new T.MeshBasicMaterial({ color: 0xc9ffd6 }));
+    const ring = new T.Mesh(new T.RingGeometry(10, 11.2, 40), tm("acc", new T.MeshBasicMaterial({ color: 0x3cf26a, transparent: true, opacity: .55, side: T.DoubleSide })));
+    ring.rotation.x = -Math.PI / 2;
+    [oct, core, ring].forEach(o => { o.position.y = 26; v.add(o); });
+    v.add(new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(), new T.Vector3(0, 26, 0)]), twinEdge));
+    v.position.set(s.x, s.h, s.z);
+    twin.add(v);
+    s.twin = { oct, ring, core };
+    s.r = 210; s.gain = 1; s.dir = rnd() * Math.PI * 2;
+  });
+
+  /* ---------- devices (UEs): cars, people with phones, a UAV, the Green Line trolley ---------- */
+  const mainPaths = roads.filter(r => r.w >= 11).map(r => mkPath(clip(r.pts, 330))).filter(p => p.len > 180).sort((a, b) => b.len - a.len);
+  const huntPath = mkPath(clip(roads.filter(r => r.hunt).sort((a, b) => b.pts.length - a.pts.length)[0].pts, 360));
+  const vEdge = c => tm("soft", new T.LineBasicMaterial({ color: c, transparent: true, opacity: .95 }));
+  const ues = [];
+
+  function car(color) {
+    const g = new T.Group();
+    const body = new T.Mesh(new T.BoxGeometry(4.4, 1.1, 1.9), new T.MeshStandardMaterial({ color, roughness: .35, metalness: .3 }));
+    body.position.y = .9; g.add(body);
+    const cab = new T.Mesh(new T.BoxGeometry(2.3, .8, 1.7), new T.MeshStandardMaterial({ color: 0x1d2328, roughness: .2 }));
+    cab.position.set(-.2, 1.8, 0); g.add(cab);
+    const hl = new T.MeshBasicMaterial({ color: 0xfff1c4 });
+    const tl = new T.MeshBasicMaterial({ color: 0xff3a2a });
+    [-.6, .6].forEach(z => {
+      const l = new T.Mesh(new T.BoxGeometry(.12, .25, .45), hl); l.position.set(2.22, .95, z); g.add(l);
+      const r = new T.Mesh(new T.BoxGeometry(.12, .22, .4), tl); r.position.set(-2.22, .95, z); g.add(r);
+    });
+    return g;
+  }
+  function person(color) {
+    const g = new T.Group();
+    const b = new T.Mesh(new T.CylinderGeometry(.28, .34, 1.5, 8), new T.MeshStandardMaterial({ color, roughness: .9 }));
+    b.position.y = .75; g.add(b);
+    const hd = new T.Mesh(new T.SphereGeometry(.22, 8, 6), new T.MeshStandardMaterial({ color: 0xc89c7c }));
+    hd.position.y = 1.72; g.add(hd);
+    const ph = new T.Mesh(new T.BoxGeometry(.12, .32, .2), new T.MeshBasicMaterial({ color: 0x9ff8ff }));
+    ph.position.set(.38, 1.35, 0); g.add(ph);
+    return g;
+  }
+  function drone() {
+    const g = new T.Group(), dark = new T.MeshStandardMaterial({ color: 0x0b0d0f, roughness: .55 });
+    g.add(new T.Mesh(new T.BoxGeometry(1.4, .38, 1.4), dark));
+    [1, -1].forEach(sg => { const a = new T.Mesh(new T.BoxGeometry(3.4, .12, .16), dark); a.rotation.y = sg * Math.PI / 4; g.add(a); });
+    const rotors = [];
+    [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([x, z]) => {
+      const r = new T.Mesh(new T.CylinderGeometry(.8, .8, .04, 16), new T.MeshBasicMaterial({ color: 0x1c2024, transparent: true, opacity: .7 }));
+      r.position.set(x * 1.2, .28, z * 1.2); g.add(r); rotors.push(r);
+    });
+    // navigation lights: red port, green starboard (model faces +x), white strobe on top
+    const nav = (color, x, z) => {
+      const l = new T.Group();
+      l.add(new T.Mesh(new T.SphereGeometry(.12, 10, 8), new T.MeshBasicMaterial({ color })), glow(color, .9));
+      l.position.set(x, .05, z); g.add(l); return l;
+    };
+    nav(0xff3020, 1.2, -1.2); nav(0xff3020, -1.2, -1.2);
+    nav(0x2dff6a, 1.2, 1.2); nav(0x2dff6a, -1.2, 1.2);
+    const strobe = new T.Group();
+    strobe.add(new T.Mesh(new T.SphereGeometry(.12, 10, 8), new T.MeshBasicMaterial({ color: 0xffffff })), glow(0xffffff, 1.2));
+    strobe.position.y = .45; g.add(strobe);
+    g.userData.rotors = rotors;
+    g.userData.strobe = strobe;
+    return g;
+  }
+  function trolley() {
+    const g = new T.Group();
+    const b = new T.Mesh(new T.BoxGeometry(22, 3, 2.7), new T.MeshStandardMaterial({ color: 0x2e7a45, roughness: .5 }));
+    b.position.y = 2; g.add(b);
+    const w = new T.Mesh(new T.BoxGeometry(20, .9, 2.75), new T.MeshStandardMaterial({ color: 0x14202a, emissive: 0xffe2a8, emissiveIntensity: .35 }));
+    w.position.y = 2.6; g.add(w);
+    return g;
+  }
+  function addUE(kind, name, realObj, twinObj, scale, move) {
+    realObj.scale.setScalar(scale); twinObj.scale.setScalar(scale);
+    realObj.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    real.add(realObj); twin.add(twinObj);
+    const u = { kind, name, realObj, twinObj, move, pos: new T.Vector3() };
+    ues.push(u);
+    return u;
+  }
+  const carColors = [0xd8d8d8, 0x1f3e6e, 0x9a1f1f, 0x2b2b2b, 0xc9c2b0, 0x5a6b74, 0xe3e3e3];
+  for (let i = 0; i < 7; i++) {
+    const path = mainPaths[i % mainPaths.length], s0 = rnd() * path.len * 2, v = (12 + rnd() * 6) * (rnd() > .5 ? 1 : -1), lane = 2.6 + (i % 2) * 2.6;
+    const tw = new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(4.4, 2.2, 1.9)), vEdge(0x8dffc2));
+    tw.position.y = 1.1;
+    const twg = new T.Group(); twg.add(tw);
+    addUE("car", "Car-" + (i + 1), car(carColors[i]), twg, 4, t => along(path, s0 + v * t, lane));
+  }
+  for (let i = 0; i < 7; i++) {
+    const path = mainPaths[(i + 1) % mainPaths.length], s0 = rnd() * path.len * 2, v = (2.4 + rnd()) * (rnd() > .5 ? 1 : -1), side = rnd() > .5 ? 1 : -1;
+    const tw = new T.Group(), o = new T.Mesh(new T.OctahedronGeometry(.75, 0), tm("acc", new T.MeshBasicMaterial({ color: 0x3cf26a, wireframe: true })));
+    o.position.y = 1.4; tw.add(o);
+    const w = mainPaths[(i + 1) % mainPaths.length] === mainPaths[0] ? 16 : 13;
+    addUE("phone", "Phone-" + (i + 1), person([0x2a3a52, 0x7a2f2f, 0x2e4d39, 0x56463a, 0x333333][i % 5]), tw, 6.5, t => along(path, s0 + v * t, side * (w / 2 + 3.5)));
+  }
+  const uavHome = sites[0] ? new T.Vector3(sites[0].x + 90, 0, sites[0].z + 60) : new T.Vector3(60, 0, 40);
+  {
+    const tw = new T.Group(), o = new T.Mesh(new T.OctahedronGeometry(1.4, 0), new T.MeshBasicMaterial({ color: 0xd8ff6a, wireframe: true }));
+    const r = new T.Mesh(new T.RingGeometry(2.2, 2.5, 24), new T.MeshBasicMaterial({ color: 0xd8ff6a, side: T.DoubleSide }));
+    r.rotation.x = -Math.PI / 2; tw.add(o, r);
+    addUE("uav", "UAV-1", drone(), tw, 10, t => ({ x: uavHome.x + Math.cos(t * .12) * 70, z: uavHome.z + Math.sin(t * .12) * 45, y: 82 + Math.sin(t * .7) * 3, ang: -t * .12 - Math.PI / 2 }));
+  }
+  {
+    const tw = new T.Group(), e = new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(22, 3, 2.7)), vEdge(0x8dffc2));
+    e.position.y = 2; tw.add(e);
+    addUE("trolley", "Green Line", trolley(), tw, 1.5, t => along(huntPath, 40 + 9 * t, 0));
+  }
+
+  /* ---------- the story: measure → test in twin → act → verify ---------- */
+  // each scenario: the intent KPI (with gauge range) plus a guardrail KPI that must not regress
+  const SCEN = [
+    { ue: "uav", cell: 0, kpi: "UAV SINR", short: "SINR", goal: 10, unit: "dB", now: 4, act: "Beam +12° up", min: 0, max: 20,
+      cands: [["Boost power +3 dB", 7], ["Steer beam +12° up", 13]],
+      guard: { kpi: "Ground users", unit: "%", goal: 95, now: 100, vals: [99, 97], min: 80, max: 100 } },
+    { ue: "phone", cell: 1, kpi: "Edge DL rate", short: "DL", goal: 50, unit: "Mb/s", now: 31, act: "Tilt −2°", min: 0, max: 80,
+      cands: [["Tilt −2°", 58]],
+      guard: { kpi: "Neighbor SINR", unit: "dB", goal: 10, now: 13, vals: [12], min: 0, max: 20 } },
+    { ue: "trolley", cell: 2, kpi: "HO success", short: "HO", goal: 99, unit: "%", now: 93, act: "HO offset +2 dB", min: 90, max: 100,
+      cands: [["Handover offset +1 dB", 97], ["Handover offset +2 dB", 99.4]],
+      guard: { kpi: "Ping-pong", unit: "%", goal: 2, now: 1.8, vals: [1.9, 1.5], min: 0, max: 5, lower: true } },
+    { ue: "car", cell: 3, kpi: "Peak load", short: "Load", goal: 70, unit: "%", now: 92, act: "Offload 4 UEs", lower: true, min: 40, max: 100,
+      cands: [["Offload 2 UEs", 78], ["Offload 4 UEs", 64]],
+      guard: { kpi: "Neighbor load", unit: "%", goal: 80, now: 58, vals: [66, 74], min: 40, max: 100, lower: true } },
+  ];
+  const DUR = 13, PH = { M: [0, 3.2], T: [3.2, 8.4], A: [8.4, 10.4], V: [10.4, 13] };
+  const fmt = (v, u) => (u === "%" && v % 1 ? v.toFixed(1) : Math.round(v)) + (u === "%" ? "%" : " " + u);
+  const meets = (sc, v) => sc.lower ? v <= sc.goal : v >= sc.goal;
+
+  const stepsEl = [...document.querySelectorAll("#flowSteps span")];
+  const iGoal = document.getElementById("iGoal"), iCand = document.getElementById("iCand"), iVal = document.getElementById("iVal"), iNow = document.getElementById("iNow");
+  let lastKey = "";
+
+  function story(t) {
+    const n = Math.floor(t / DUR), sc = SCEN[n % SCEN.length], lt = t - n * DUR;
+    const site = sites[Math.min(sc.cell, sites.length - 1)];
+    const phase = lt < PH.T[0] ? "M" : lt < PH.A[0] ? "T" : lt < PH.V[0] ? "A" : "V";
+    // pick the device of the right kind closest to the cell, fixed for this scenario
+    if (sc._n !== n) {
+      sc._n = n;
+      sc._u = ues.filter(u => u.kind === sc.ue).sort((a, b) => a.pos.distanceTo(site.top) - b.pos.distanceTo(site.top))[0];
+    }
+    const tp = clamp((lt - PH.T[0]) / (PH.T[1] - PH.T[0]));
+    const ci = Math.min(sc.cands.length - 1, Math.floor(tp * sc.cands.length));
+    const ck = clamp(tp * sc.cands.length - ci);
+    const cand = sc.cands[ci];
+    const prev = ci ? sc.cands[ci - 1][1] : sc.now;
+    const pred = phase === "M" ? sc.now : phase === "T" ? lerp(sc.now, cand[1], ease(clamp(ck * 1.4))) : sc.cands[sc.cands.length - 1][1];
+    const g = sc.guard;
+    const guard = phase === "M" ? g.now : phase === "T" ? lerp(g.now, g.vals[ci], ease(clamp(ck * 1.4))) : g.vals[g.vals.length - 1];
+    return { n, sc, lt, site, phase, u: sc._u, tp, ci, ck, cand, pred, prev, guard };
+  }
+
+  function hud(S) {
+    const idx = "MTAV".indexOf(S.phase);
+    stepsEl.forEach((el, i) => { el.classList.toggle("on", i === idx); el.classList.toggle("done", i < idx); });
+    const key = S.n + S.phase + S.ci;
+    if (key === lastKey && S.phase !== "T") return;
+    lastKey = key;
+    const sc = S.sc;
+    iGoal.textContent = `${sc.kpi} ${sc.lower ? "≤" : "≥"} ${fmt(sc.goal, sc.unit)}`;
+    iNow.textContent = fmt(sc.now, sc.unit);
+    iCand.textContent = S.phase === "M" ? "—" : S.cand[0];
+    const ok = meets(sc, S.pred), settled = S.phase !== "T" || S.ck > .72;
+    iVal.innerHTML = S.phase === "M" ? "—" :
+      `${fmt(S.pred, sc.unit)} <i class="${settled ? (ok ? "ok" : "bad") : ""}">${settled ? (ok ? "✓ meets intent" : "✗ rejected") : "testing…"}</i>`;
+  }
+
+  /* radio map in the twin (AIRMap-style), boosted toward the target device as the winning policy lands */
+  function drawHeat(S) {
+    hctx.clearRect(0, 0, 256, 256);
+    hctx.globalCompositeOperation = "lighter";
+    sites.forEach(s => {
+      const cx = toMap(s.x), cz = toMap(s.z), r = s.r / MAP * 256 * s.gain;
+      const g = hctx.createRadialGradient(cx, cz, 0, cx, cz, r);
+      g.addColorStop(0, `rgba(${TH.hi},.55)`); g.addColorStop(.45, `rgba(${TH.rgb},.22)`); g.addColorStop(1, `rgba(${TH.rgb},0)`);
+      hctx.fillStyle = g; hctx.beginPath(); hctx.arc(cx, cz, r, 0, Math.PI * 2); hctx.fill();
+    });
+    if (S && S.u && S.phase !== "M") {
+      const good = S.phase === "T" ? (meets(S.sc, S.cand[1]) ? 1 : .45) * ease(clamp(S.ck * 1.4)) : 1;
+      const ux = toMap(S.u.pos.x), uz = toMap(S.u.pos.z), sx = toMap(S.site.x), sz = toMap(S.site.z);
+      const mx = lerp(sx, ux, .6), mz = lerp(sz, uz, .6), r = 26 + 34 * good;
+      const g = hctx.createRadialGradient(mx, mz, 0, mx, mz, r);
+      g.addColorStop(0, `rgba(230,255,140,${.75 * good})`); g.addColorStop(1, "rgba(230,255,140,0)");
+      hctx.fillStyle = g; hctx.beginPath(); hctx.arc(mx, mz, r, 0, Math.PI * 2); hctx.fill();
+    }
+    hctx.globalCompositeOperation = "source-over";
+    heatTex.needsUpdate = true;
+  }
+
+  /* ---------- overlay (2D): telemetry, rays, action, labels ---------- */
+  const octx = overlay.getContext("2d");
+  let W = 0, H = 0, ODPR = 1;
+  const v3 = new T.Vector3();
+  function scr(p) {                    // world → top-half screen; the twin copy is at (x, y + H/2)
+    v3.copy(p).project(cam);
+    return { x: (v3.x + 1) / 2 * W, y: (1 - v3.y) / 2 * (H / 2), ok: v3.z < 1 && v3.x > -1.1 && v3.x < 1.1 && v3.y > -1.1 && v3.y < 1.1 };
+  }
+  function tag(x, y, text, color, alpha = 1, align = "left") {
+    octx.globalAlpha = alpha;
+    octx.font = "500 10px 'JetBrains Mono', ui-monospace, monospace";
+    const w = octx.measureText(text).width + 12, h = 18;
+    let bx = align === "left" ? x + 10 : x - w - 10;
+    bx = clamp(bx, 4, W - w - 4);
+    const by = clamp(y - h / 2, 34, H - h - 4);          // stay clear of the corner label
+    octx.fillStyle = "rgba(4,7,6,.82)"; octx.strokeStyle = color; octx.lineWidth = 1;
+    octx.beginPath(); octx.roundRect ? octx.roundRect(bx, by, w, h, 5) : octx.rect(bx, by, w, h); octx.fill(); octx.stroke();
+    octx.fillStyle = color; octx.textBaseline = "middle"; octx.fillText(text, bx + 6, by + h / 2 + .5);
+    octx.globalAlpha = 1;
+  }
+  function dot(x, y, r, color, glow = 10) {
+    octx.shadowColor = color; octx.shadowBlur = glow; octx.fillStyle = color;
+    octx.beginPath(); octx.arc(x, y, r, 0, Math.PI * 2); octx.fill(); octx.shadowBlur = 0;
+  }
+  // GREEN is the accent (follows the theme); LIME / RED stay as pass / fail status colours
+  const SILVER = "#dfe7ea", LIME = "#d8ff6a", RED = "#ff8a6a";
+  let GREEN = TH.css;
+
+  function drawOverlay(S, t) {
+    octx.setTransform(ODPR, 0, 0, ODPR, 0, 0);
+    octx.clearRect(0, 0, W, H);
+    const mid = H / 2;
+    const g = octx.createLinearGradient(0, 0, W, 0);
+    g.addColorStop(0, `rgba(${TH.rgb},0)`); g.addColorStop(.5, `rgba(${TH.rgb},.95)`); g.addColorStop(1, `rgba(${TH.rgb},0)`);
+    octx.fillStyle = g; octx.fillRect(0, mid - .75, W, 1.5);
+    if (!S.u) return;
+
+    const uTop = new T.Vector3(S.u.pos.x, S.u.pos.y + (S.u.kind === "uav" ? 6 : 10), S.u.pos.z);
+    const U = scr(uTop), C = scr(S.site.top);
+    const sc = S.sc, lt = S.lt;
+
+    if (S.phase === "M") {
+      // every device and cell streams measurements down through the live link
+      const k0 = (lt - PH.M[0]) / (PH.M[1] - PH.M[0]);
+      const pts = ues.map(u => scr(new T.Vector3(u.pos.x, u.pos.y + 8, u.pos.z))).concat(sites.map(s => scr(s.top)));
+      pts.forEach((p, i) => {
+        if (!p.ok) return;
+        const k = clamp((k0 * 1.6 - (i % 7) * .08));
+        octx.strokeStyle = "rgba(200,230,215,.10)"; octx.lineWidth = 1;
+        octx.beginPath(); octx.moveTo(p.x, p.y); octx.lineTo(p.x, mid + p.y); octx.stroke();
+        if (k > 0 && k < 1) { const y = lerp(p.y, mid + p.y, ease(k)); dot(p.x, y, 2.2, y < mid ? SILVER : GREEN, 8); }
+      });
+      if (U.ok) {
+        dot(U.x, U.y, 3.5, SILVER, 12);
+        tag(U.x, U.y - 14, `${S.u.name} · ${sc.short} ${fmt(sc.now, sc.unit)}`, SILVER, clamp(k0 * 4));
+      }
+      if (C.ok) tag(C.x, C.y - 12, `${S.site.name} · KPIs, config`, SILVER, clamp(k0 * 4 - .6), "right");
+      if (k0 > .55) tag(W / 2 + 4, mid + 22, "measurements → twin", GREEN, clamp((k0 - .55) * 4));
+    }
+
+    if (S.phase === "T" && U.ok && C.ok) {
+      // candidate policy evaluated in the twin: rays from the virtual cell to the virtual device
+      const ux = U.x, uy = mid + U.y, cx = C.x, cy = mid + C.y;
+      const good = meets(sc, S.cand[1]), settled = S.ck > .72;
+      const col = settled ? (good ? LIME : RED) : GREEN;
+      octx.setLineDash([5, 5]); octx.lineDashOffset = -t * 30; octx.lineWidth = 1.4; octx.strokeStyle = col;
+      [-1, 0, 1].forEach(b => {
+        const bx = (cx + ux) / 2 + b * 34, by = (cy + uy) / 2 - 22 * Math.abs(b) + (b ? 0 : -14);
+        octx.globalAlpha = b ? .55 : .9;
+        octx.beginPath(); octx.moveTo(cx, cy);
+        if (b) { octx.lineTo(bx, by); octx.lineTo(ux, uy); } else octx.quadraticCurveTo(bx, by, ux, uy);
+        octx.stroke();
+        if (b) dot(bx, by, 2, col, 6);
+      });
+      octx.setLineDash([]); octx.globalAlpha = 1;
+      dot(cx, cy, 4, GREEN, 14); dot(ux, uy, 3.5, col, 12);
+      tag(cx, cy + 16, `${S.site.name} · ${S.cand[0]}`, GREEN, 1, cx > W * .6 ? "right" : "left");
+      if (settled) tag(ux, uy + 16, `${sc.short} ${fmt(S.cand[1], sc.unit)} ${good ? "✓" : "✗"}`, col, 1, ux > W * .6 ? "right" : "left");
+    }
+
+    if (S.phase === "A" && C.ok) {
+      // validated action travels back up the live link to the real cell
+      const k = ease(clamp((lt - PH.A[0]) / 1.4));
+      const y = lerp(mid + C.y, C.y, k);
+      octx.strokeStyle = "rgba(216,255,106,.35)"; octx.lineWidth = 2;
+      octx.beginPath(); octx.moveTo(C.x, mid + C.y); octx.lineTo(C.x, y); octx.stroke();
+      dot(C.x, y, 4.5, LIME, 16);
+      tag(C.x, y, `action · ${sc.act}`, LIME, 1, C.x > W * .6 ? "right" : "left");
+      if (k >= 1) {
+        const r = 8 + (lt - PH.A[0] - 1.4) * 40;
+        octx.strokeStyle = `rgba(216,255,106,${clamp(1 - r / 60)})`; octx.lineWidth = 2;
+        octx.beginPath(); octx.arc(C.x, C.y, r, 0, Math.PI * 2); octx.stroke();
+      }
+      if (U.ok) tag(U.x, mid + U.y, "intent met in twin ✓", LIME, .9, U.x > W * .6 ? "right" : "left");
+    }
+
+    if (S.phase === "V") {
+      const k = clamp((lt - PH.V[0]) / 1.2);
+      if (C.ok) tag(C.x, C.y - 12, `${S.site.name} · config updated`, LIME, 1, "right");
+      if (U.ok) {
+        dot(U.x, U.y, 3.5, LIME, 14);
+        tag(U.x, U.y - 14, `${S.u.name} · ${sc.short} ${fmt(sc.cands[sc.cands.length - 1][1], sc.unit)} ✓`, LIME, clamp(k * 3));
+        if (k < 1) dot(U.x, lerp(U.y, mid + U.y, ease(k)), 2.4, GREEN, 8);
+      }
+    }
+    gauges(S);
+  }
+
+  /* twin validation gauges: intent KPI + guardrail KPI, bottom-right of the twin half */
+  function gauge(cx, cy, r, g, val, settled) {
+    const a0 = Math.PI * .75, a1 = Math.PI * 2.25;
+    const f = v => a0 + (a1 - a0) * clamp((v - g.min) / (g.max - g.min));
+    const arc = (from, to, rad, w, col) => { octx.strokeStyle = col; octx.lineWidth = w; octx.beginPath(); octx.arc(cx, cy, rad, from, to); octx.stroke(); };
+    const ok = g.lower ? val <= g.goal : val >= g.goal;
+    const col = settled ? (ok ? LIME : RED) : "#c9d3d8";
+    octx.lineCap = "round";
+    arc(a0, a1, r, r * .17, "rgba(255,255,255,.09)");                                      // track
+    arc(g.lower ? a0 : f(g.goal), g.lower ? f(g.goal) : a1, r + r * .2, 2, `rgba(${TH.rgb},.55)`);   // pass zone
+    arc(a0, f(val), r, r * .17, col);                                                       // value
+    octx.lineCap = "butt";
+    const tick = (v, c, len) => {                                                          // goal / baseline markers
+      const a = f(v);
+      octx.strokeStyle = c; octx.lineWidth = 1.6; octx.beginPath();
+      octx.moveTo(cx + Math.cos(a) * (r - len), cy + Math.sin(a) * (r - len)); octx.lineTo(cx + Math.cos(a) * (r + len), cy + Math.sin(a) * (r + len)); octx.stroke();
+    };
+    tick(g.goal, "#ffffff", r * .32);
+    const an = f(g.now); dot(cx + Math.cos(an) * (r + r * .2), cy + Math.sin(an) * (r + r * .2), 2, "#8d999f", 0);
+    octx.textAlign = "center"; octx.textBaseline = "middle";
+    octx.fillStyle = col; octx.font = `600 ${Math.round(r * .5)}px 'JetBrains Mono', ui-monospace, monospace`;
+    octx.fillText(g.unit === "%" && val % 1 ? val.toFixed(1) : Math.round(val), cx, cy - r * .05);
+    octx.fillStyle = "#9aaba1"; octx.font = `500 ${Math.round(r * .27)}px 'JetBrains Mono', ui-monospace, monospace`;
+    octx.fillText(g.unit, cx, cy + r * .4);
+    const fs = W < 420 ? 7.5 : 9.5;
+    octx.fillStyle = "#dfe7ea"; octx.font = `500 ${fs}px 'JetBrains Mono', ui-monospace, monospace`;
+    octx.fillText(g.kpi.toUpperCase(), cx, cy + r + fs + 3);
+    octx.fillStyle = "#66786d";
+    octx.fillText(`${g.lower ? "≤" : "≥"} ${g.goal}${g.unit === "%" ? "%" : " " + g.unit}`, cx, cy + r + fs * 2 + 6);
+    octx.textAlign = "left";
+  }
+  function gauges(S) {
+    const sc = S.sc, small = W < 420, r = small ? 15 : W < 600 ? 25 : 30;
+    const cw = r * 2 + (small ? 34 : 34), bw = cw * 2 + 12, bh = r * 2 + (small ? 50 : 62), bx = W - bw - (small ? 6 : 10), by = H - bh - (small ? 6 : 10);
+    octx.fillStyle = "rgba(4,7,6,.84)"; octx.strokeStyle = `rgba(${TH.rgb},.28)`; octx.lineWidth = 1;
+    octx.beginPath(); octx.roundRect ? octx.roundRect(bx, by, bw, bh, 10) : octx.rect(bx, by, bw, bh); octx.fill(); octx.stroke();
+    const settled = S.phase !== "T" || S.ck > .72, both = meets(sc, S.pred) && (sc.guard.lower ? S.guard <= sc.guard.goal : S.guard >= sc.guard.goal);
+    const head = S.phase === "M" ? ["FIELD BASELINE", "#9aaba1"] : S.phase === "T" ? (settled ? (both ? ["PASSES IN TWIN", LIME] : ["REJECTED IN TWIN", RED]) : ["TESTING IN TWIN…", GREEN]) : ["READY TO DEPLOY ✓", LIME];
+    octx.font = `500 ${small ? 7.5 : 9.5}px 'JetBrains Mono', ui-monospace, monospace`; octx.textBaseline = "middle";
+    octx.fillStyle = head[1]; octx.fillText(head[0], bx + 8, by + (small ? 10 : 13));
+    const cy = by + (small ? 18 : 24) + r + r * .2;
+    gauge(bx + 6 + cw / 2, cy, r, { kpi: sc.kpi, unit: sc.unit, goal: sc.goal, now: sc.now, min: sc.min, max: sc.max, lower: sc.lower }, S.pred, settled);
+    gauge(bx + 6 + cw * 1.5 + 6, cy, r, sc.guard, S.guard, settled);
+  }
+
+  function applyTheme() {
+    TH = THEMES[document.documentElement.dataset.logo === "cyan" ? "cyan" : "green"];
+    GREEN = TH.css;
+    ["acc", "soft", "fill", "grid"].forEach(role => themed[role].forEach(m => m.color.set(TH[role === "grid" ? "grid" : role])));
+    drawHeat(null);
+    if (reduce) frame(5.5);
+  }
+  addEventListener("twinet-theme", applyTheme);
+
+  /* ---------- look switch ---------- */
+  let look = "photo";
+  function setLook(m) {
+    look = m;
+    LOOK.photo.visible = m === "photo"; LOOK.render.visible = m === "render";
+    panel.classList.toggle("look-render", m === "render");
+    if (m === "photo") {
+      hemi.color.set(0xe2edf4); hemi.groundColor.set(0x4d4d44); hemi.intensity = .78;
+      sun.color.set(0xfff3dc); sun.intensity = .85; sun.position.set(240, 640, 420);
+      amb.color.set(0x8a949a); amb.intensity = .35;
+      real.fog.color.set(0xb9c8cf); real.fog.near = 900; real.fog.far = 2300;
+    } else {
+      hemi.color.set(0x8fb0c4); hemi.groundColor.set(0x1c1b18); hemi.intensity = .42;
+      sun.color.set(0xffbf85); sun.intensity = 1.05; sun.position.set(-520, 260, 330);
+      amb.color.set(0x2c343a); amb.intensity = .3;
+      real.fog.color.set(0x2a3438); real.fog.near = 650; real.fog.far = 1500;
+    }
+    const b = document.getElementById("lookToggle");
+    if (b) b.textContent = m === "photo" ? "Hero: photo" : "Hero: rendered";
+    if (reduce) frame(5.5);
+  }
+  const lookBtn = document.getElementById("lookToggle");
+  if (lookBtn) lookBtn.addEventListener("click", () => setLook(look === "photo" ? "render" : "photo"));
+
+  /* ---------- frame loop ---------- */
+  function resize() {
+    const r = host.getBoundingClientRect();
+    W = r.width; H = r.height;
+    const dpr = Math.min(devicePixelRatio || 1, 1.6);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(W, H, false);
+    renderer.domElement.style.width = W + "px"; renderer.domElement.style.height = H + "px";
+    ODPR = Math.min(devicePixelRatio || 1, 2);
+    overlay.width = W * ODPR; overlay.height = H * ODPR;
+    cam.aspect = W / (H / 2);
+    cam.fov = W < 420 ? 36 : 30;
+    cam.updateProjectionMatrix();
+  }
+
+  function frame(t) {
+    // slow orbit; both halves share one camera so the twin stays a true mirror
+    const yaw = -.62 + Math.sin(t * .035) * .1, el = look === "photo" ? .66 : .44, R = (W < 420 ? 740 : 880) * (look === "photo" ? .9 : 1);
+    cam.position.set(target.x + R * Math.cos(el) * Math.sin(yaw), R * Math.sin(el), target.z + R * Math.cos(el) * Math.cos(yaw));
+    cam.lookAt(target);
+    cam.updateMatrixWorld();
+
+    ues.forEach(u => {
+      const p = u.move(t);
+      u.pos.set(p.x, p.y || 0, p.z);
+      [u.realObj, u.twinObj].forEach(o => { o.position.copy(u.pos); o.rotation.y = -p.ang; });
+      if (u.kind === "uav") {
+        u.realObj.userData.rotors.forEach(r => (r.rotation.y += .9));
+        u.realObj.userData.strobe.visible = (t * 1.25) % 1 < .12;
+      }
+    });
+    const S = story(t);
+    sites.forEach((s, i) => {
+      s.led.visible = (t * .9 + i * .23) % 1 < .55;
+      s.twin.oct.rotation.y = t * .8 + i;
+      const act = s === S.site && (S.phase === "A" || S.phase === "V");
+      s.twin.ring.scale.setScalar(1 + .15 * Math.sin(t * 2 + i) + (s === S.site && S.phase === "T" ? .35 : 0));
+      s.twin.core.material.color.set(act ? 0xe6ff9a : TH.core);
+    });
+    if (tick++ % 3 === 0) drawHeat(S);
+    hud(S);
+
+    renderer.setScissorTest(true);
+    renderer.setViewport(0, H / 2, W, H / 2); renderer.setScissor(0, H / 2, W, H / 2);
+    renderer.render(real, cam);
+    renderer.setViewport(0, 0, W, H / 2); renderer.setScissor(0, 0, W, H / 2);
+    renderer.render(twin, cam);
+    drawOverlay(S, t);
+  }
+
+  let tick = 0, running = false, visible = true, t0 = performance.now(), tPaused = 0, pausedAt = 0;
+  function loop(now) {
+    if (!running) return;
+    frame(Math.max(0, (now - t0 - tPaused) / 1000));   // rAF timestamps can predate t0 on the first frame
+    requestAnimationFrame(loop);
+  }
+  function setRun(on) {
+    if (reduce) return;
+    if (on && !running) { if (pausedAt) tPaused += performance.now() - pausedAt; running = true; requestAnimationFrame(loop); }
+    if (!on && running) { running = false; pausedAt = performance.now(); }
+  }
+  resize();
+  applyTheme();
+  setLook(/render/.test(location.hash) ? "render" : "photo");
+  addEventListener("resize", () => { resize(); if (reduce) frame(5.5); });
+  if (reduce) frame(5.5);
+  else {
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; setRun(visible && !document.hidden); }).observe(panel);
+    document.addEventListener("visibilitychange", () => setRun(visible && !document.hidden));
+    setRun(true);
+  }
+})();
+
+</script>
 </body>
 </html>
